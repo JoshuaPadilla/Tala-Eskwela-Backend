@@ -2,9 +2,6 @@ import { IsNotEmpty, IsString } from 'class-validator';
 
 export class RegisterParentDto {
   @IsString()
-  parent_id: string;
-
-  @IsString()
   @IsNotEmpty()
   first_name: string;
 

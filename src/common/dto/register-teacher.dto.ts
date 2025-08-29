@@ -2,9 +2,6 @@ import { IsNotEmpty, IsString } from 'class-validator';
 
 export class RegisterTeacherDto {
   @IsString()
-  teacher_id: string;
-
-  @IsString()
   @IsNotEmpty()
   first_name: string;
 

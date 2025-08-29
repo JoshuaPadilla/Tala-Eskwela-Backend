@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { Roles } from 'src/enums/role.enum';
 import {
   Column,
@@ -9,8 +10,8 @@ import {
 
 @Entity()
 export class Teacher {
-  @PrimaryGeneratedColumn()
-  teacher_id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ type: 'text' })
   first_name: string;
@@ -28,6 +29,7 @@ export class Teacher {
   password: string;
 
   @Column({ type: 'text' })
+  @Exclude()
   phone: string;
 
   @Column({ type: 'enum', enum: Roles, default: Roles.TEACHER })

@@ -9,8 +9,8 @@ import {
 
 @Entity()
 export class Parent {
-  @PrimaryGeneratedColumn()
-  parent_id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ type: 'text' })
   first_name: string;
@@ -28,7 +28,7 @@ export class Parent {
   password: string;
 
   @Column({ type: 'text' })
-  phone_number: string;
+  phone: string;
 
   @Column({ type: 'enum', enum: Roles, default: Roles.PARENT })
   role: Roles;

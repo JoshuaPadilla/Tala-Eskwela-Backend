@@ -9,8 +9,8 @@ import {
 
 @Entity()
 export class Student {
-  @PrimaryGeneratedColumn()
-  student_id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   rfid_tag_uid: string;
@@ -24,7 +24,7 @@ export class Student {
   @Column({ type: 'text' })
   middle_name: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', unique: true })
   email: string;
 
   @Column({ type: 'text' })
@@ -42,8 +42,8 @@ export class Student {
   @Column({ type: 'enum', enum: Roles, default: Roles.STUDENT })
   role: Roles;
 
-  @Column({ type: 'text' })
-  guardian_id?: string;
+  @Column({ type: 'text', nullable: true })
+  guardian_id: string;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -1,8 +1,20 @@
-import { IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNotEmptyObject,
+  IsObject,
+  IsString,
+} from 'class-validator';
+import { Roles } from 'src/enums/role.enum';
 
 export class LoginDto {
   @IsString()
-  student_id: string;
+  email: string;
+
+  @IsString()
+  id: string;
+
+  @IsString()
+  role: Roles;
 
   @IsString()
   password: string;

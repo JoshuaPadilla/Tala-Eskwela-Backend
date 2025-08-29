@@ -1,11 +1,11 @@
 import { Roles } from 'src/enums/role.enum';
 
 export interface StudentInterface {
-  student_id: string;
+  id: string;
   rfid_tag_uid: string;
   first_name: string;
   last_name: string;
-  middle_Name: string;
+  middle_name: string;
   email: string;
   password: string;
   phone: string;

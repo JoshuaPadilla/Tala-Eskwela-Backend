@@ -1,7 +1,7 @@
 import { Roles } from 'src/enums/role.enum';
 
 export interface ParentInterface {
-  parent_id: string;
+  id: string;
   first_name: string;
   last_name: string;
   middle_name: string;
