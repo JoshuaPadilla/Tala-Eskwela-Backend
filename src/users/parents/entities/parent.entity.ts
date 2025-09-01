@@ -1,8 +1,10 @@
 import { Roles } from 'src/enums/role.enum';
+import { Student } from 'src/users/students/entities/student.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -38,4 +40,11 @@ export class Parent {
 
   @UpdateDateColumn()
   updatedAt?: Date;
+
+  // Relations
+
+  @ManyToOne(() => Student, (student) => student.parent, {
+    cascade: true,
+  })
+  students: Student[];
 }

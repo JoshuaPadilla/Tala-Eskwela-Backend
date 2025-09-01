@@ -8,7 +8,6 @@ import { JwtPayload } from 'src/common/types/jwt-payload.types';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly configService: ConfigService) {
     const secret = configService.get<string>('JWT_SECRET', 'Hello world');
-    console.log('JWT STRATEGY SECRET:', secret);
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,

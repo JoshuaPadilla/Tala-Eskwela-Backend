@@ -1,8 +1,14 @@
+import { Course } from 'src/courses/entities/course.entity';
 import { Roles } from 'src/enums/role.enum';
+import { Parent } from 'src/users/parents/entities/parent.entity';
+import { Teacher } from 'src/users/teachers/entities/teacher.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -42,12 +48,22 @@ export class Student {
   @Column({ type: 'enum', enum: Roles, default: Roles.STUDENT })
   role: Roles;
 
-  @Column({ type: 'text', nullable: true })
-  guardian_id: string;
-
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt?: Date;
+
+  // Relations
+
+  @ManyToMany(() => Teacher, (teachers) => teachers.students)
+  @JoinTable()
+  teachers: Teacher[];
+
+  @ManyToMany(() => Course, (courses) => courses.students)
+  @JoinTable()
+  courses: Course[];
+
+  @OneToMany(() => Parent, (parent) => parent.students)
+  parent: Parent;
 }

@@ -12,6 +12,8 @@ import { Teacher } from './users/teachers/entities/teacher.entity';
 import { Student } from './users/students/entities/student.entity';
 import { Parent } from './users/parents/entities/parent.entity';
 import { RfidModule } from './rfid/rfid.module';
+import { CoursesModule } from './courses/courses.module';
+import { Course } from './courses/entities/course.entity';
 
 @Module({
   imports: [
@@ -26,7 +28,7 @@ import { RfidModule } from './rfid/rfid.module';
         ssl: {
           rejectUnauthorized: true,
         },
-        entities: [Teacher, Student, Parent],
+        entities: [Teacher, Student, Parent, Course],
         synchronize: true,
       }),
       inject: [ConfigService],
@@ -36,6 +38,7 @@ import { RfidModule } from './rfid/rfid.module';
     StudentsModule,
     ParentsModule,
     RfidModule,
+    CoursesModule,
   ],
   controllers: [AppController],
   providers: [AppService, AttendanceGateway],

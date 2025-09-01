@@ -34,4 +34,8 @@ export class StudentsService {
   async findByEmail(email: string): Promise<StudentInterface | null> {
     return this.studentRepository.findOne({ where: { email } });
   }
+
+  async findByRfidUid(uid: string): Promise<StudentInterface | null> {
+    return this.studentRepository.findOne({ where: { rfid_tag_uid: uid } });
+  }
 }
