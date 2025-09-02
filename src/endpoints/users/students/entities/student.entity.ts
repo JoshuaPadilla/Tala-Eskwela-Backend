@@ -1,7 +1,7 @@
-import { Course } from 'src/courses/entities/course.entity';
+import { Course } from 'src/endpoints/courses/entities/course.entity';
 import { Roles } from 'src/enums/role.enum';
-import { Parent } from 'src/users/parents/entities/parent.entity';
-import { Teacher } from 'src/users/teachers/entities/teacher.entity';
+import { Parent } from 'src/endpoints/users/parents/entities/parent.entity';
+import { Teacher } from 'src/endpoints/users/teachers/entities/teacher.entity';
 import {
   Column,
   CreateDateColumn,
@@ -12,6 +12,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Class } from 'src/endpoints/class/entities/class.entity';
 
 @Entity()
 export class Student {
@@ -56,12 +57,15 @@ export class Student {
 
   // Relations
 
+  @ManyToMany(() => Class, (classes) => classes.students)
+  @JoinTable()
+  classes: Class[];
+
   @ManyToMany(() => Teacher, (teachers) => teachers.students)
   @JoinTable()
   teachers: Teacher[];
 
   @ManyToMany(() => Course, (courses) => courses.students)
-  @JoinTable()
   courses: Course[];
 
   @OneToMany(() => Parent, (parent) => parent.students)

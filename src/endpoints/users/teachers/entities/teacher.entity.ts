@@ -1,16 +1,22 @@
+import { Exclude } from 'class-transformer';
+import { Course } from 'src/endpoints/courses/entities/course.entity';
 import { Roles } from 'src/enums/role.enum';
-import { Student } from 'src/users/students/entities/student.entity';
+import { Student } from 'src/endpoints/users/students/entities/student.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Class } from 'src/endpoints/class/entities/class.entity';
 
 @Entity()
-export class Parent {
+export class Teacher {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -30,9 +36,10 @@ export class Parent {
   password: string;
 
   @Column({ type: 'text' })
+  @Exclude()
   phone: string;
 
-  @Column({ type: 'enum', enum: Roles, default: Roles.PARENT })
+  @Column({ type: 'enum', enum: Roles, default: Roles.TEACHER })
   role: Roles;
 
   @CreateDateColumn()
@@ -41,10 +48,18 @@ export class Parent {
   @UpdateDateColumn()
   updatedAt?: Date;
 
-  // Relations
+  //relations
 
-  @ManyToOne(() => Student, (student) => student.parent, {
+  @ManyToMany(() => Course, (course) => course.teachers, {
     cascade: true,
   })
+  @JoinTable()
+  teached_courses: Course[];
+
+  //
+  @ManyToMany(() => Student, (students) => students.teachers, {
+    cascade: true,
+  })
+  @JoinTable()
   students: Student[];
 }

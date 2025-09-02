@@ -1,6 +1,13 @@
-import { Body, Controller, NotFoundException, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  NotFoundException,
+  Post,
+} from '@nestjs/common';
 import { RfidService } from './rfid.service';
-import { StudentsService } from 'src/users/students/students.service';
+import { StudentsService } from 'src/endpoints/users/students/students.service';
 
 @Controller('rfid')
 export class RfidController {
@@ -18,5 +25,13 @@ export class RfidController {
     }
 
     return student;
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('read')
+  async readRfid(@Body() body: { uid: string }) {
+    if (body.uid !== '2E60D65') {
+      throw new NotFoundException(`User with ID ${body.uid} not found.`);
+    }
   }
 }

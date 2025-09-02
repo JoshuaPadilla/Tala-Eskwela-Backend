@@ -7,9 +7,9 @@ import {
 } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { Roles } from 'src/enums/role.enum';
-import { ParentsService } from 'src/users/parents/parents.service';
-import { TeachersService } from 'src/users/teachers/teachers.service';
-import { StudentsService } from 'src/users/students/students.service';
+import { ParentsService } from 'src/endpoints/users/parents/parents.service';
+import { TeachersService } from 'src/endpoints/users/teachers/teachers.service';
+import { StudentsService } from 'src/endpoints/users/students/students.service';
 import { RegistrationDto } from './dto/registration.dto';
 import { RegisterParentDto } from 'src/common/dto/register-parent.dto';
 import { RegisterStudentDto } from 'src/common/dto/register-student.dto'; // Assuming you have these DTOs

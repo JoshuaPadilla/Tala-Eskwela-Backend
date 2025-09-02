@@ -1,11 +1,14 @@
-import { Student } from 'src/users/students/entities/student.entity';
-import { Teacher } from 'src/users/teachers/entities/teacher.entity';
+import { Student } from 'src/endpoints/users/students/entities/student.entity';
+import { Teacher } from 'src/endpoints/users/teachers/entities/teacher.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
+  ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -29,7 +32,11 @@ export class Course {
 
   //   Relation
 
-  @ManyToMany(() => Teacher, (teachers) => teachers.courses)
+  @ManyToOne(() => Teacher, { nullable: true })
+  @JoinColumn()
+  assigned_teacher: Teacher;
+
+  @ManyToMany(() => Teacher, (teachers) => teachers.teached_courses)
   @JoinTable()
   teachers: Teacher[];
 
