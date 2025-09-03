@@ -20,7 +20,7 @@ export class StudentsService {
   ) {}
   async registerStudent(
     registerStudentDto: RegisterStudentDto,
-  ): Promise<StudentInterface> {
+  ): Promise<Student> {
     const hashedPassword = await hashPassword(registerStudentDto.password);
 
     const newStudent = await this.studentRepository.save({
@@ -31,13 +31,13 @@ export class StudentsService {
     return newStudent;
   }
 
-  async findAll(): Promise<StudentInterface[]> {
+  async findAll(): Promise<Student[]> {
     const students = await this.studentRepository.find();
 
     return students;
   }
 
-  async findById(id: string) {
+  async findById(id: string): Promise<Student> {
     const student = await this.studentRepository.findOne({ where: { id } });
     if (!student) {
       throw new NotFoundException('No Student found');
@@ -46,11 +46,11 @@ export class StudentsService {
     return student;
   }
 
-  async findByEmail(email: string): Promise<StudentInterface | null> {
+  async findByEmail(email: string) {
     return this.studentRepository.findOne({ where: { email } });
   }
 
-  async findByRfidUid(uid: string): Promise<StudentInterface> {
+  async findByRfidUid(uid: string) {
     const student = await this.studentRepository.findOne({
       where: { rfid_tag_uid: uid },
     });

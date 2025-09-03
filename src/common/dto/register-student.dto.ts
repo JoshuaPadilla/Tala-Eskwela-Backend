@@ -1,4 +1,7 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Course } from 'src/endpoints/courses/entities/course.entity';
+import { Parent } from 'src/endpoints/users/parents/entities/parent.entity';
+import { Teacher } from 'src/endpoints/users/teachers/entities/teacher.entity';
 
 export class RegisterStudentDto {
   @IsString()
@@ -33,7 +36,11 @@ export class RegisterStudentDto {
   @IsNotEmpty()
   password: string;
 
-  @IsString()
-  @IsNotEmpty()
-  class_id: string;
+  @IsOptional()
+  @IsArray()
+  courses: Course[];
+
+  @IsOptional()
+  @IsArray()
+  teachers: Teacher[];
 }

@@ -43,9 +43,6 @@ export class Student {
   @Column({ type: 'text' })
   grade_lvl: string;
 
-  @Column({ type: 'text' })
-  class_id: string;
-
   @Column({ type: 'enum', enum: Roles, default: Roles.STUDENT })
   role: Roles;
 
