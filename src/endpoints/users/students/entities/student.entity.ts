@@ -19,7 +19,7 @@ export class Student {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ nullable: true })
   rfid_tag_uid: string;
 
   @Column({ type: 'text' })

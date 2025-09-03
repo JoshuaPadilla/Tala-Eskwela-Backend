@@ -1,8 +1,9 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class RegisterStudentDto {
   @IsString()
   @IsNotEmpty()
+  @IsOptional()
   rfid_tag_uid: string;
 
   @IsString()

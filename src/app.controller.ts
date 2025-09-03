@@ -7,7 +7,6 @@ export class AppController {
 
   @Get()
   tapRfid() {
-    console.log('hello');
     this.appService.tapRfid();
   }
 }
