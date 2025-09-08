@@ -12,8 +12,12 @@ import {
 import { StudentsService } from './students.service';
 import { JwtAuthGuard } from 'src/guards/auth.guard';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { User_Roles } from 'src/decorators/roles.decorator';
+import { Roles } from 'src/enums/role.enum';
+import { RolesGuard } from 'src/guards/role.guard';
 
-@UseGuards(JwtAuthGuard)
+@User_Roles(Roles.TEACHER)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('students')
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}

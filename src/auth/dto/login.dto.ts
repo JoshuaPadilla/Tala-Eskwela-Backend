@@ -18,4 +18,7 @@ export class LoginDto {
 
   @IsString()
   password: string;
+
+  @IsString()
+  push_token: string;
 }

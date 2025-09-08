@@ -14,6 +14,9 @@ export class Parent {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'text', nullable: true })
+  push_token: string;
+
   @Column({ type: 'text' })
   first_name: string;
 

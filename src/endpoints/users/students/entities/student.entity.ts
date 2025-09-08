@@ -22,6 +22,9 @@ export class Student {
   @Column({ nullable: true })
   rfid_tag_uid: string;
 
+  @Column({ nullable: true })
+  push_token: string;
+
   @Column({ type: 'text' })
   first_name: string;
 
@@ -39,9 +42,6 @@ export class Student {
 
   @Column({ type: 'text' })
   phone: string;
-
-  @Column({ type: 'text' })
-  grade_lvl: string;
 
   @Column({ type: 'enum', enum: Roles, default: Roles.STUDENT })
   role: Roles;

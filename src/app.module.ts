@@ -16,6 +16,7 @@ import { CoursesModule } from './endpoints/courses/courses.module';
 import { Course } from './endpoints/courses/entities/course.entity';
 import { ClassModule } from './endpoints/class/class.module';
 import { Class } from './endpoints/class/entities/class.entity';
+import { NotificationsService } from './notifications/notifications.service';
 
 @Module({
   imports: [
@@ -44,6 +45,6 @@ import { Class } from './endpoints/class/entities/class.entity';
     ClassModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AttendanceGateway],
+  providers: [AppService, AttendanceGateway, NotificationsService],
 })
 export class AppModule {}

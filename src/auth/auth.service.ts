@@ -17,10 +17,6 @@ import { RegisterTeacherDto } from 'src/common/dto/register-teacher.dto';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
 import { comparePasswords } from 'src/common/helpers/passwordHelpers';
-import { TeacherInterface } from 'src/common/interfaces/teacher.interface';
-import { StudentInterface } from 'src/common/interfaces/student.interface';
-import { compare } from 'bcrypt';
-import { ParentInterface } from 'src/common/interfaces/parent.interface';
 
 @Injectable()
 export class AuthService {
@@ -103,20 +99,24 @@ export class AuthService {
     return this.login(newUser);
   }
 
-  async validateUser(email: string, password: string) {
+  async validateUser(email: string, password: string, push_token: string) {
     const teacher = await this.teacherService.findByEmail(email);
     if (teacher && (await comparePasswords(password, teacher.password))) {
-      return teacher;
+      return await this.teacherService.updateTeacher(teacher.id, {
+        push_token,
+      });
     }
 
     const student = await this.studentService.findByEmail(email);
     if (student && (await comparePasswords(password, student.password))) {
-      return student;
+      return await this.studentService.updateStudent(student.id, {
+        push_token,
+      });
     }
 
     const parent = await this.parentService.findByEmail(email);
-    if (student && (await comparePasswords(password, student.password))) {
-      return parent;
+    if (parent && (await comparePasswords(password, parent.password))) {
+      return await this.parentService.updateParent(parent.id, { push_token });
     }
 
     return null;

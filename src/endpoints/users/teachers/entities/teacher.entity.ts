@@ -20,6 +20,9 @@ export class Teacher {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'text', nullable: true })
+  push_token: string;
+
   @Column({ type: 'text' })
   first_name: string;
 
@@ -33,10 +36,10 @@ export class Teacher {
   email: string;
 
   @Column({ type: 'text' })
+  @Exclude()
   password: string;
 
   @Column({ type: 'text' })
-  @Exclude()
   phone: string;
 
   @Column({ type: 'enum', enum: Roles, default: Roles.TEACHER })

@@ -29,4 +29,8 @@ export class RegisterParentDto {
   @IsString()
   @IsNotEmpty()
   password: string;
+
+  @IsOptional()
+  @IsString()
+  push_token: string;
 }

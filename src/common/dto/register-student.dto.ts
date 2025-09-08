@@ -10,6 +10,10 @@ export class RegisterStudentDto {
   rfid_tag_uid: string;
 
   @IsString()
+  @IsOptional()
+  push_token: string;
+
+  @IsString()
   @IsNotEmpty()
   first_name: string;
 
@@ -28,9 +32,6 @@ export class RegisterStudentDto {
   @IsString()
   @IsNotEmpty()
   phone: string;
-  @IsString()
-  @IsNotEmpty()
-  grade_lvl: string;
 
   @IsString()
   @IsNotEmpty()
