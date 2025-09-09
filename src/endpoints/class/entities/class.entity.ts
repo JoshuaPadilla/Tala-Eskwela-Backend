@@ -1,3 +1,5 @@
+import { Attendance } from 'src/endpoints/attendance/entities/attendance.entity';
+import { Schedule } from 'src/endpoints/schedule/entities/schedule.entity';
 import { Student } from 'src/endpoints/users/students/entities/student.entity';
 import { Teacher } from 'src/endpoints/users/teachers/entities/teacher.entity';
 import {
@@ -5,8 +7,8 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
+  ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -18,7 +20,10 @@ export class Class {
   class_id: string;
 
   @Column({ type: 'text' })
-  name: string;
+  section: string;
+
+  @Column({ type: 'int' })
+  grade_lvl: number;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -32,7 +37,12 @@ export class Class {
   @JoinColumn()
   class_teacher: Teacher;
 
-  @ManyToMany(() => Student, (student) => student.classes, { cascade: true })
-  @JoinTable()
+  @ManyToOne(() => Student, (student) => student.class)
   students: Student[];
+
+  @ManyToOne(() => Attendance, (attendance) => attendance.class)
+  attendance_records: Attendance[];
+
+  @OneToMany(() => Schedule, (schedule) => schedule.class)
+  schedules: Schedule[];
 }

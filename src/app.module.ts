@@ -12,11 +12,15 @@ import { Teacher } from './endpoints/users/teachers/entities/teacher.entity';
 import { Student } from './endpoints/users/students/entities/student.entity';
 import { Parent } from './endpoints/users/parents/entities/parent.entity';
 import { RfidModule } from './endpoints/rfid/rfid.module';
-import { CoursesModule } from './endpoints/courses/courses.module';
-import { Course } from './endpoints/courses/entities/course.entity';
 import { ClassModule } from './endpoints/class/class.module';
 import { Class } from './endpoints/class/entities/class.entity';
 import { NotificationsService } from './notifications/notifications.service';
+import { AttendanceModule } from './endpoints/attendance/attendance.module';
+import { Schedule } from './endpoints/schedule/entities/schedule.entity';
+import { Attendance } from './endpoints/attendance/entities/attendance.entity';
+import { Subject } from './endpoints/subject/entities/subject.entity';
+import { CacheModule } from '@nestjs/cache-manager';
+import { InitializerService } from './init.service';
 
 @Module({
   imports: [
@@ -31,7 +35,15 @@ import { NotificationsService } from './notifications/notifications.service';
         ssl: {
           rejectUnauthorized: true,
         },
-        entities: [Teacher, Student, Parent, Course, Class],
+        entities: [
+          Teacher,
+          Student,
+          Parent,
+          Class,
+          Schedule,
+          Attendance,
+          Subject,
+        ],
         synchronize: true,
       }),
       inject: [ConfigService],
@@ -41,10 +53,18 @@ import { NotificationsService } from './notifications/notifications.service';
     StudentsModule,
     ParentsModule,
     RfidModule,
-    CoursesModule,
     ClassModule,
+    AttendanceModule,
+    CacheModule.register({
+      isGlobal: true,
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService, AttendanceGateway, NotificationsService],
+  providers: [
+    AppService,
+    AttendanceGateway,
+    NotificationsService,
+    InitializerService,
+  ],
 })
 export class AppModule {}

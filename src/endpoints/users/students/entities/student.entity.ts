@@ -1,4 +1,3 @@
-import { Course } from 'src/endpoints/courses/entities/course.entity';
 import { Roles } from 'src/enums/role.enum';
 import { Parent } from 'src/endpoints/users/parents/entities/parent.entity';
 import { Teacher } from 'src/endpoints/users/teachers/entities/teacher.entity';
@@ -8,11 +7,13 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Class } from 'src/endpoints/class/entities/class.entity';
+import { Attendance } from 'src/endpoints/attendance/entities/attendance.entity';
 
 @Entity()
 export class Student {
@@ -54,16 +55,11 @@ export class Student {
 
   // Relations
 
-  @ManyToMany(() => Class, (classes) => classes.students)
-  @JoinTable()
-  classes: Class[];
+  @ManyToOne(() => Attendance, (attendance) => attendance.student)
+  attendances: Attendance[];
 
-  @ManyToMany(() => Teacher, (teachers) => teachers.students)
-  @JoinTable()
-  teachers: Teacher[];
-
-  @ManyToMany(() => Course, (courses) => courses.students)
-  courses: Course[];
+  @OneToMany(() => Class, (classes) => classes.students)
+  class: Class[];
 
   @OneToMany(() => Parent, (parent) => parent.students)
   parent: Parent;

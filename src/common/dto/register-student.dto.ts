@@ -1,5 +1,4 @@
 import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { Course } from 'src/endpoints/courses/entities/course.entity';
 import { Parent } from 'src/endpoints/users/parents/entities/parent.entity';
 import { Teacher } from 'src/endpoints/users/teachers/entities/teacher.entity';
 
@@ -36,10 +35,6 @@ export class RegisterStudentDto {
   @IsString()
   @IsNotEmpty()
   password: string;
-
-  @IsOptional()
-  @IsArray()
-  courses: Course[];
 
   @IsOptional()
   @IsArray()

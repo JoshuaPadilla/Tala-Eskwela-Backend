@@ -1,15 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { AttendanceGateway } from './gateways/attendance-gateway';
 import { ConfigService } from '@nestjs/config';
+import { RFID_MODE } from './enums/rfid_mode.enum';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class AppService {
-  constructor(
-    private readonly attendanceGateway: AttendanceGateway,
-    private readonly configService: ConfigService,
-  ) {}
+  constructor(@Inject('CACHE_MANAGER') private cache: Cache) {}
 
-  tapRfid() {
-    this.attendanceGateway.handleRfidTap();
+  async change_mode(mode: RFID_MODE) {
+    await this.cache.set('rfid_mode', mode);
   }
 }

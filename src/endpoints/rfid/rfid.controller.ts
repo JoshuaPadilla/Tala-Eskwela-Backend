@@ -17,14 +17,9 @@ export class RfidController {
   ) {}
 
   @Post()
-  async attendance(@Body() body: { rfid_tag_uid: string }) {
-    const student = await this.studentService.findByRfidUid(body.rfid_tag_uid);
-
-    if (!student) {
-      throw new NotFoundException('Student Not Found');
-    }
-
-    return student;
+  async tap(@Body() body: { rfid_tag_uid: string }) {
+    console.log(body);
+    this.rfidService.rfid_tap('asdas');
   }
 
   @HttpCode(HttpStatus.OK)

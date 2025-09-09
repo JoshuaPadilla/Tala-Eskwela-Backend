@@ -1,5 +1,4 @@
 import { Exclude } from 'class-transformer';
-import { Course } from 'src/endpoints/courses/entities/course.entity';
 import { Roles } from 'src/enums/role.enum';
 import { Student } from 'src/endpoints/users/students/entities/student.entity';
 import {
@@ -9,11 +8,13 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Class } from 'src/endpoints/class/entities/class.entity';
+import { Subject } from 'src/endpoints/subject/entities/subject.entity';
 
 @Entity()
 export class Teacher {
@@ -53,16 +54,5 @@ export class Teacher {
 
   //relations
 
-  @ManyToMany(() => Course, (course) => course.teachers, {
-    cascade: true,
-  })
-  @JoinTable()
-  teached_courses: Course[];
-
   //
-  @ManyToMany(() => Student, (students) => students.teachers, {
-    cascade: true,
-  })
-  @JoinTable()
-  students: Student[];
 }

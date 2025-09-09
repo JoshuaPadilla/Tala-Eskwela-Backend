@@ -41,6 +41,7 @@ export class TeachersService {
   async findByEmail(email: string) {
     const teacher = await this.teacherRepository.findOne({
       where: { email: email },
+      // relations: ['teached_courses', 'students'],
     });
 
     return teacher;

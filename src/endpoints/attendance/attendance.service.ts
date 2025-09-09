@@ -1,18 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { AttendanceService } from '../attendance/attendance.service';
-import { Cache } from 'cache-manager';
-import { RFID_MODE } from 'src/enums/rfid_mode.enum';
 import { StudentsService } from '../users/students/students.service';
+import { Cache } from '@nestjs/cache-manager';
 
 @Injectable()
-export class RfidService {
+export class AttendanceService {
   constructor(
-    private readonly attendanceService: AttendanceService,
     private readonly studentService: StudentsService,
     @Inject('CACHE_MANAGER') private cache: Cache,
   ) {}
 
-  async rfid_tap(uuid: string) {
+  async newAttendance(uuid: string) {
     const value = await this.cache.get('rfid_mode');
     console.log(value);
   }

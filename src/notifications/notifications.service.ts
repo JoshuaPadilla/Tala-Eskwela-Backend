@@ -21,7 +21,7 @@ export class NotificationsService {
     const messages = expoPushTokens.map((token) => ({
       to: token,
       sound: 'default',
-      title: 'Attendance !!!!',
+      title: 'Attendance ',
       body: 'Subject Science for time 10:00 - 11:30 AM',
       data:
         data && typeof data === 'object'
