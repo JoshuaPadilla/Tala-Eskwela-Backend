@@ -10,7 +10,7 @@ export class AttendanceGateway {
     console.log(`A new client connected: ${client.id}`);
   }
 
-  handleRfidTap() {
-    this.server.emit('rfidTap', { message: 'new student' });
+  updateAttendance() {
+    this.server.emit('newAttendance', { message: 'new attendance' });
   }
 }

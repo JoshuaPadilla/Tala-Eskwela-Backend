@@ -55,12 +55,12 @@ export class Student {
 
   // Relations
 
-  @ManyToOne(() => Attendance, (attendance) => attendance.student)
+  @OneToMany(() => Attendance, (attendance) => attendance.student)
   attendances: Attendance[];
 
-  @OneToMany(() => Class, (classes) => classes.students)
+  @ManyToOne(() => Class, (classes) => classes.students)
   class: Class[];
 
-  @OneToMany(() => Parent, (parent) => parent.students)
+  @ManyToOne(() => Parent, (parent) => parent.students)
   parent: Parent;
 }

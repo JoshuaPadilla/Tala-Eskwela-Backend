@@ -37,10 +37,10 @@ export class Class {
   @JoinColumn()
   class_teacher: Teacher;
 
-  @ManyToOne(() => Student, (student) => student.class)
+  @OneToMany(() => Student, (student) => student.class)
   students: Student[];
 
-  @ManyToOne(() => Attendance, (attendance) => attendance.class)
+  @OneToMany(() => Attendance, (attendance) => attendance.class)
   attendance_records: Attendance[];
 
   @OneToMany(() => Schedule, (schedule) => schedule.class)

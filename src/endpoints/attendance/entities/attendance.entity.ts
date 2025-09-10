@@ -5,6 +5,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -25,9 +26,9 @@ export class Attendance {
   @CreateDateColumn()
   timestamp: Date;
 
-  @OneToMany(() => Student, (student) => student.attendances)
+  @ManyToOne(() => Student, (student) => student.attendances)
   student: Student;
 
-  @OneToMany(() => Class, (aclass) => aclass.attendance_records)
+  @ManyToOne(() => Class, (aclass) => aclass.attendance_records)
   class: Class;
 }

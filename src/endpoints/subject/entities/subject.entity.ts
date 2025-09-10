@@ -10,6 +10,9 @@ export class Subject {
   @Column({ type: 'text' })
   name: string;
 
+  @Column({ type: 'text' })
+  desc: string;
+
   // Relations
   @OneToMany(() => Schedule, (schedule) => schedule.subject)
   schedules: Schedule[];

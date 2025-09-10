@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -46,7 +47,7 @@ export class Parent {
 
   // Relations
 
-  @ManyToOne(() => Student, (student) => student.parent, {
+  @OneToMany(() => Student, (student) => student.parent, {
     cascade: true,
   })
   students: Student[];

@@ -16,8 +16,8 @@ import { User_Roles } from 'src/decorators/roles.decorator';
 import { Roles } from 'src/enums/role.enum';
 import { RolesGuard } from 'src/guards/role.guard';
 
-@User_Roles(Roles.TEACHER)
-@UseGuards(JwtAuthGuard, RolesGuard)
+// @User_Roles(Roles.TEACHER)
+// @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('students')
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -10,6 +11,7 @@ import {
 import { AuthService } from './auth.service';
 import { RegistrationDto } from './dto/registration.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from 'src/guards/auth.guard';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -30,5 +32,11 @@ export class AuthController {
       message: `Registered Successfully`,
       data: result,
     };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('check')
+  checkAuth(@Request() req) {
+    return this.authService.login(req.user);
   }
 }

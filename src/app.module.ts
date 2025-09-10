@@ -21,6 +21,8 @@ import { Attendance } from './endpoints/attendance/entities/attendance.entity';
 import { Subject } from './endpoints/subject/entities/subject.entity';
 import { CacheModule } from '@nestjs/cache-manager';
 import { InitializerService } from './init.service';
+import { SubjectModule } from './endpoints/subject/subject.module';
+import { ScheduleModule } from './endpoints/schedule/schedule.module';
 
 @Module({
   imports: [
@@ -55,6 +57,8 @@ import { InitializerService } from './init.service';
     RfidModule,
     ClassModule,
     AttendanceModule,
+    SubjectModule,
+    ScheduleModule,
     CacheModule.register({
       isGlobal: true,
     }),
