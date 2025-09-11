@@ -37,6 +37,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('check')
   checkAuth(@Request() req) {
-    return this.authService.login(req.user);
+    return this.authService.checkAuth(req.user);
   }
 }

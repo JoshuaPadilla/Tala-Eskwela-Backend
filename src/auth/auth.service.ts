@@ -2,8 +2,7 @@
 import {
   Injectable,
   BadRequestException,
-  NotImplementedException,
-  UnauthorizedException,
+  NotFoundException,
 } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { Roles } from 'src/enums/role.enum';
@@ -120,5 +119,24 @@ export class AuthService {
     }
 
     return null;
+  }
+
+  async checkAuth(user: any) {
+    switch (user.role) {
+      case Roles.PARENT:
+        const { password: parentPassword, ...parent } =
+          await this.parentService.findById(user.userId);
+        return parent;
+      case Roles.STUDENT:
+        const { password: studentPassword, ...student } =
+          await this.studentService.findById(user.userId);
+        return student;
+      case Roles.TEACHER:
+        const { password: teacherPassword, ...teacher } =
+          await this.teacherService.findById(user.userId);
+        return teacher;
+      default:
+        throw new NotFoundException();
+    }
   }
 }

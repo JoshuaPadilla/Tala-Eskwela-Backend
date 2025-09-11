@@ -33,9 +33,7 @@ export class TeachersService {
   }
 
   async findAll(): Promise<TeacherInterface[]> {
-    return this.teacherRepository.find({
-      relations: ['teached_courses', 'students'],
-    });
+    return this.teacherRepository.find();
   }
 
   async findByEmail(email: string) {
@@ -50,7 +48,6 @@ export class TeachersService {
   async findById(id: string) {
     const teacher = await this.teacherRepository.findOne({
       where: { id },
-      relations: ['teached_courses', 'students'],
     });
 
     if (!teacher) {

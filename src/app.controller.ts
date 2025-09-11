@@ -23,5 +23,7 @@ export class AppController {
   async change_mode(@Body() body: { mode: RFID_MODE }) {
     const { mode } = body;
     await this.appService.change_mode(mode);
+
+    console.log(mode);
   }
 }

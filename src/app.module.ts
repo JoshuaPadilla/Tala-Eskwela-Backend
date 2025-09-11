@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AttendanceGateway } from './gateways/attendance-gateway';
+import { RfidTapGateway } from './gateways/rfid-tap-.gateway';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
@@ -66,7 +66,7 @@ import { ScheduleModule } from './endpoints/schedule/schedule.module';
   controllers: [AppController],
   providers: [
     AppService,
-    AttendanceGateway,
+    RfidTapGateway,
     NotificationsService,
     InitializerService,
   ],

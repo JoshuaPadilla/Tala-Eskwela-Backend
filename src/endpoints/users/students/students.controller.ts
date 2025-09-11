@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   Patch,
+  Post,
   UseGuards,
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
@@ -31,6 +32,12 @@ export class StudentsController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.studentsService.findById(id);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('setStudentToRegister')
+  setStudentToRegister(@Body() body: { id: string }) {
+    return this.studentsService.setStudentToRegister(body.id);
   }
 
   @Patch(':id')

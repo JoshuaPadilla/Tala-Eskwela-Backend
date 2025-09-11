@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { AttendanceGateway } from './gateways/attendance-gateway';
+import { RfidTapGateway } from './gateways/rfid-tap-.gateway';
 import { ConfigService } from '@nestjs/config';
 import { RFID_MODE } from './enums/rfid_mode.enum';
 import { Cache } from 'cache-manager';

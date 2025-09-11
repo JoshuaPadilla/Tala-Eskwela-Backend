@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
   UseGuards,
@@ -9,15 +10,21 @@ import { Student } from './entities/student.entity';
 import { Repository } from 'typeorm';
 import { RegisterStudentDto } from 'src/common/dto/register-student.dto';
 import { hashPassword } from 'src/common/helpers/passwordHelpers';
-import { StudentInterface } from 'src/common/interfaces/student.interface';
+
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { Cache } from 'cache-manager';
+import { RFID_MODE } from 'src/enums/rfid_mode.enum';
 
 @Injectable()
 export class StudentsService {
   constructor(
     @InjectRepository(Student)
     private studentRepository: Repository<Student>,
+    @Inject('CACHE_MANAGER') private cache: Cache,
   ) {}
+
+  private studentIdToRegister: string | null = null;
+
   async registerStudent(
     registerStudentDto: RegisterStudentDto,
   ): Promise<Student> {
@@ -81,5 +88,42 @@ export class StudentsService {
       throw new BadRequestException('Teacher not found');
     }
     await this.studentRepository.remove(student);
+  }
+
+  async setStudentToRegister(id: string) {
+    await this.cache.set('rfid_mode', RFID_MODE.REGISTER);
+
+    this.setStudentIdToRegister(id);
+  }
+
+  async registerStudentUuid(uuid: string) {
+    const id = this.getStudentIdToRegister();
+
+    if (!id) {
+      await this.cache.set('rfid_mode', RFID_MODE.READ);
+      throw new BadRequestException('student id not found');
+    }
+
+    const studentToUpdate = await this.studentRepository.preload({
+      id,
+      rfid_tag_uid: uuid,
+    });
+
+    if (!studentToUpdate) {
+      await this.cache.set('rfid_mode', RFID_MODE.READ);
+      throw new BadRequestException('Student not found');
+    }
+
+    await this.cache.set('rfid_mode', RFID_MODE.READ);
+    return this.studentRepository.save(studentToUpdate);
+  }
+
+  // getters and setters
+  getStudentIdToRegister() {
+    return this.studentIdToRegister;
+  }
+
+  private setStudentIdToRegister(id: string) {
+    this.studentIdToRegister = id;
   }
 }

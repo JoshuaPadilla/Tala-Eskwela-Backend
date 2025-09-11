@@ -1,8 +1,8 @@
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { Socket } from 'socket.io-client';
+import { Server, Socket } from 'socket.io'; // Corrected import for Socket
 
 @WebSocketGateway({ cors: '*' })
-export class AttendanceGateway {
+export class RfidTapGateway {
   @WebSocketServer()
   server;
 
@@ -10,7 +10,7 @@ export class AttendanceGateway {
     console.log(`A new client connected: ${client.id}`);
   }
 
-  updateAttendance() {
-    this.server.emit('newAttendance', { message: 'new attendance' });
+  handleRfidTap(rfid_tag_uid: string) {
+    this.server.emit('tapped', { data: rfid_tag_uid });
   }
 }

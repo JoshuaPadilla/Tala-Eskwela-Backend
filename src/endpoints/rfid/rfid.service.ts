@@ -3,17 +3,26 @@ import { AttendanceService } from '../attendance/attendance.service';
 import { Cache } from 'cache-manager';
 import { RFID_MODE } from 'src/enums/rfid_mode.enum';
 import { StudentsService } from '../users/students/students.service';
+import { RfidTapGateway } from 'src/gateways/rfid-tap-.gateway';
 
 @Injectable()
 export class RfidService {
   constructor(
     private readonly attendanceService: AttendanceService,
     private readonly studentService: StudentsService,
+    private readonly rfidTapGateway: RfidTapGateway,
     @Inject('CACHE_MANAGER') private cache: Cache,
   ) {}
 
-  async rfid_tap(uuid: string) {
+  async rfid_tap(rfid_tag_uid: string) {
     const value = await this.cache.get('rfid_mode');
-    console.log(value);
+
+    if (value === RFID_MODE.REGISTER) {
+      console.log('register');
+      await this.studentService.registerStudentUuid(rfid_tag_uid);
+      this.rfidTapGateway.handleRfidTap(rfid_tag_uid);
+    } else {
+      this.attendanceService.newAttendance(rfid_tag_uid);
+    }
   }
 }
