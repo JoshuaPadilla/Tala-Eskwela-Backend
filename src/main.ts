@@ -12,6 +12,7 @@ async function bootstrap() {
       disableErrorMessages: false,
     }),
   );
+  app.enableCors();
   await app.listen(3000, '0.0.0.0');
 }
 bootstrap();
