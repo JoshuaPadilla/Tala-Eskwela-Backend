@@ -18,6 +18,7 @@ export class RfidController {
 
   @Post()
   async tap(@Body() body: { rfid_tag_uid: string }) {
+    console.log('Hello Nigga!');
     this.rfidService.rfid_tap(body.rfid_tag_uid);
   }
 

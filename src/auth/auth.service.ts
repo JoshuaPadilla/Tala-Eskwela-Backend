@@ -16,6 +16,7 @@ import { RegisterTeacherDto } from 'src/common/dto/register-teacher.dto';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
 import { comparePasswords } from 'src/common/helpers/passwordHelpers';
+import { AdminService } from 'src/endpoints/admin/admin.service';
 
 @Injectable()
 export class AuthService {
@@ -24,6 +25,7 @@ export class AuthService {
     private readonly teacherService: TeachersService,
     private readonly studentService: StudentsService,
     private readonly jwtService: JwtService,
+    private readonly adminService: AdminService,
   ) {}
 
   async login(loginDto: LoginDto) {
@@ -118,6 +120,11 @@ export class AuthService {
       return await this.parentService.updateParent(parent.id, { push_token });
     }
 
+    const admin = await this.adminService.findByEmail(email);
+    if (admin && (await comparePasswords(password, admin.password))) {
+      return admin;
+    }
+
     return null;
   }
 
@@ -135,6 +142,11 @@ export class AuthService {
         const { password: teacherPassword, ...teacher } =
           await this.teacherService.findById(user.userId);
         return teacher;
+      case Roles.ADMIN:
+        const { password: adminPassword, ...admin } =
+          await this.adminService.findById(user.userId);
+        return admin;
+
       default:
         throw new NotFoundException();
     }

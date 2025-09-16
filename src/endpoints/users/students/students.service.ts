@@ -85,7 +85,7 @@ export class StudentsService {
   async deleteStudent(id: string) {
     const student = await this.studentRepository.findOne({ where: { id } });
     if (!student) {
-      throw new BadRequestException('Teacher not found');
+      throw new BadRequestException('Student not found');
     }
     await this.studentRepository.remove(student);
   }

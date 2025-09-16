@@ -23,6 +23,8 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { InitializerService } from './init.service';
 import { SubjectModule } from './endpoints/subject/subject.module';
 import { ScheduleModule } from './endpoints/schedule/schedule.module';
+import { Admin } from './endpoints/admin/entities/admin.entity';
+import { AdminModule } from './endpoints/admin/admin.module';
 
 @Module({
   imports: [
@@ -45,6 +47,7 @@ import { ScheduleModule } from './endpoints/schedule/schedule.module';
           Schedule,
           Attendance,
           Subject,
+          Admin,
         ],
         synchronize: true,
       }),
@@ -62,6 +65,7 @@ import { ScheduleModule } from './endpoints/schedule/schedule.module';
     CacheModule.register({
       isGlobal: true,
     }),
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [

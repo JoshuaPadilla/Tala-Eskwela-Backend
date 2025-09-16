@@ -53,7 +53,7 @@ export class ParentsService {
     });
 
     if (!parentToUpdate) {
-      throw new BadRequestException('Student not found');
+      throw new BadRequestException('Parent not found');
     }
 
     return this.parentRepository.save(parentToUpdate);
@@ -62,7 +62,7 @@ export class ParentsService {
   async deleteParent(id: string): Promise<void> {
     const parent = await this.parentRepository.findOne({ where: { id } });
     if (!parent) {
-      throw new BadRequestException('Teacher not found');
+      throw new BadRequestException('Parent not found');
     }
     await this.parentRepository.remove(parent);
   }
