@@ -1,12 +1,18 @@
 import { Class } from 'src/endpoints/class/entities/class.entity';
 import { Subject } from 'src/endpoints/subject/entities/subject.entity';
 import { DAY_OF_WEEK } from 'src/enums/day_of_week';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Schedule {
   @PrimaryGeneratedColumn('uuid')
-  schedule_id: string;
+  id: string;
 
   @Column({ type: 'enum', enum: DAY_OF_WEEK })
   day_of_week: DAY_OF_WEEK;
@@ -18,9 +24,13 @@ export class Schedule {
   end_time: string;
 
   // Relations
-  @ManyToOne(() => Class)
+  // Relations
+  @ManyToOne(() => Class, (c) => c.schedules, { onDelete: 'CASCADE' })
+  @JoinColumn() // FK column will be class_id
   class: Class;
 
-  @ManyToOne(() => Subject, (subject) => subject.schedules)
+  @ManyToOne(() => Subject, (subject) => subject.schedules, {
+    onDelete: 'CASCADE',
+  })
   subject: Subject;
 }

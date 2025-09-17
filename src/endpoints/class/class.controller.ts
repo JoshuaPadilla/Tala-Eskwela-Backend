@@ -17,14 +17,14 @@ export class ClassController {
     return this.classService.findAll();
   }
 
-  @Get(':class_id')
-  findOne(@Param('class_id') class_id: string) {
+  @Get(':id')
+  findOne(@Param('id') class_id: string) {
     return this.classService.findOne(class_id);
   }
 
-  @Patch(':class_id')
+  @Patch(':id')
   updateClass(
-    @Param('class_id') class_id: string,
+    @Param('id') class_id: string,
     @Body() updateForm: UpdateClassDto,
   ) {
     return this.classService.updateClass(class_id, updateForm);

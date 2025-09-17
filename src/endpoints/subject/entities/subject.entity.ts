@@ -5,7 +5,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 export class Subject {
   @PrimaryGeneratedColumn('uuid')
-  subject_id: string;
+  id: string;
 
   @Column({ type: 'text' })
   name: string;

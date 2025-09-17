@@ -13,7 +13,7 @@ import {
 @Entity()
 export class Attendance {
   @PrimaryGeneratedColumn('uuid')
-  attendance_id: string;
+  id: string;
 
   @Column({
     type: 'enum',

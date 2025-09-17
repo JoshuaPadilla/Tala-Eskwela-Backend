@@ -17,7 +17,7 @@ import {
 @Entity()
 export class Class {
   @PrimaryGeneratedColumn('uuid')
-  class_id: string;
+  id: string;
 
   @Column({ type: 'text' })
   section: string;
@@ -43,6 +43,6 @@ export class Class {
   @OneToMany(() => Attendance, (attendance) => attendance.class)
   attendance_records: Attendance[];
 
-  @OneToMany(() => Schedule, (schedule) => schedule.class)
+  @OneToMany(() => Schedule, (schedule) => schedule.class, { cascade: true })
   schedules: Schedule[];
 }

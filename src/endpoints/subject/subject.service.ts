@@ -23,13 +23,13 @@ export class SubjectService {
 
   async findOne(subject_id: string) {
     return await this.subjectRepository.findOne({
-      where: { subject_id: subject_id },
+      where: { id: subject_id },
     });
   }
 
   async updateSubject(subject_id: string, updateSubjectDto: UpdateSubjectDto) {
     return await this.subjectRepository.preload({
-      subject_id,
+      id: subject_id,
       ...updateSubjectDto,
     });
   }

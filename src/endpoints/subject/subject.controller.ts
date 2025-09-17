@@ -19,6 +19,7 @@ export class SubjectController {
 
   @Post()
   createSubject(@Body() createSubjectDto: CreateSubjectDto) {
+    console.log(createSubjectDto);
     return this.subjectService.createSubject(createSubjectDto);
   }
 
@@ -27,22 +28,22 @@ export class SubjectController {
     return this.subjectService.findAll();
   }
 
-  @Get(':subject_id')
-  findOne(@Param('subject_id') subject_id: string) {
+  @Get(':id')
+  findOne(@Param('id') subject_id: string) {
     return this.subjectService.findOne(subject_id);
   }
 
-  @Patch(':subject_id')
+  @Patch(':id')
   updateSubject(
-    @Param('subject_id') subject_id,
+    @Param('id') subject_id,
     @Body() updateSubjectDto: UpdateSubjectDto,
   ) {
     return this.subjectService.updateSubject(subject_id, updateSubjectDto);
   }
 
   @HttpCode(HttpStatus.OK)
-  @Delete(':subject_id')
-  deleteSubject(@Param('subject_id') subject_id) {
+  @Delete(':id')
+  deleteSubject(@Param('id') subject_id) {
     return this.subjectService.deleteSubject(subject_id);
   }
 }

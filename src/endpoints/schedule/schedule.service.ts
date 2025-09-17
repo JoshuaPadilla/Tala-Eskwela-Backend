@@ -21,11 +21,11 @@ export class ScheduleService {
     const { class_id, subject_id, ...rest } = createScheduleDto;
 
     const classToAdd = await this.classRepository.findOne({
-      where: { class_id },
+      where: { id: class_id },
     });
 
     const subjectToAdd = await this.subjectRepository.findOne({
-      where: { subject_id },
+      where: { id: subject_id },
     });
 
     if (!classToAdd || !subjectToAdd) {
