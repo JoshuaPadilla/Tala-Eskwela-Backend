@@ -1,41 +1,76 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Schedule } from './entities/schedule.entity';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
-import { Class } from '../class/entities/class.entity';
-import { Subject } from '../subject/entities/subject.entity';
+import { ClassService } from '../class/class.service';
+import { SubjectService } from '../subject/subject.service';
 
 @Injectable()
 export class ScheduleService {
   constructor(
     @InjectRepository(Schedule)
     private scheduleRepository: Repository<Schedule>,
-    @InjectRepository(Class)
-    private classRepository: Repository<Class>,
-    @InjectRepository(Subject)
-    private subjectRepository: Repository<Subject>,
+    @Inject(forwardRef(() => ClassService))
+    private readonly classService: ClassService,
+    @Inject(forwardRef(() => SubjectService))
+    private readonly subjectService: SubjectService,
   ) {}
 
   async createSchedule(createScheduleDto: CreateScheduleDto) {
     const { class_id, subject_id, ...rest } = createScheduleDto;
 
-    const classToAdd = await this.classRepository.findOne({
-      where: { id: class_id },
-    });
+    const classToAdd = await this.classService.findById(class_id);
 
-    const subjectToAdd = await this.subjectRepository.findOne({
-      where: { id: subject_id },
-    });
+    const subjectToAdd = await this.subjectService.findOne(subject_id);
 
-    if (!classToAdd || !subjectToAdd) {
-      throw new NotFoundException();
+    if (!subjectToAdd) {
+      throw new NotFoundException('Cannot find subject');
     }
 
-    return await this.scheduleRepository.save({
+    if (!classToAdd) {
+      throw new NotFoundException('Cannot find class');
+    }
+
+    const savedSchedule = await this.scheduleRepository.save({
       class: classToAdd,
       subject: subjectToAdd,
       ...rest,
+    });
+
+    await this.classService.addSchedule(classToAdd.id, savedSchedule);
+    await this.subjectService.addSchedules(subjectToAdd.id, [savedSchedule]);
+
+    return this.scheduleRepository.findOne({
+      where: { id: savedSchedule.id },
+      relations: ['class', 'class.class_teacher', 'subject'],
+    });
+  }
+
+  async findAll() {
+    return await this.scheduleRepository.find({
+      relations: ['class', 'class.class_teacher', 'subject'],
+    });
+  }
+
+  async deleteSchedule(schedule_id: string) {
+    await this.scheduleRepository.delete(schedule_id);
+  }
+
+  async findById(schedule_id: string) {
+    return await this.scheduleRepository.findOne({
+      where: { id: schedule_id },
+    });
+  }
+
+  async findMany(schedule_ids: string[]) {
+    return await this.scheduleRepository.find({
+      where: { id: In(schedule_ids) },
     });
   }
 }

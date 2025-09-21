@@ -59,7 +59,7 @@ export class Student {
   attendances: Attendance[];
 
   @ManyToOne(() => Class, (classes) => classes.students)
-  class: Class[];
+  class: Class;
 
   @ManyToOne(() => Parent, (parent) => parent.students)
   parent: Parent;

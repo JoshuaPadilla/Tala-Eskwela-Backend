@@ -8,6 +8,7 @@ import { Student } from '../users/students/entities/student.entity';
 import { Schedule } from '../schedule/entities/schedule.entity';
 import { Teacher } from '../users/teachers/entities/teacher.entity';
 import { TeachersService } from '../users/teachers/teachers.service';
+import { ScheduleService } from '../schedule/schedule.service';
 
 @Injectable()
 export class ClassService {
@@ -16,8 +17,7 @@ export class ClassService {
     private classRepository: Repository<Class>,
     @InjectRepository(Student)
     private studentRepository: Repository<Student>,
-    @InjectRepository(Schedule)
-    private scheduleRepository: Repository<Schedule>,
+    private readonly scheduleService: ScheduleService,
     private readonly teacherService: TeachersService,
   ) {}
 
@@ -34,20 +34,40 @@ export class ClassService {
       ...form,
       class_teacher: teacher,
     });
+
+    await this.teacherService.addClass(class_teacher, newClass);
+
     return await this.classRepository.findOne({
       where: { id: newClass.id },
-      relations: ['students', 'attendance_records', 'schedules'],
+      relations: [
+        'students',
+        'attendance_records',
+        'schedules',
+        'class_teacher',
+      ],
     });
   }
 
   async findAll() {
-    return await this.classRepository.find();
+    return await this.classRepository.find({
+      relations: [
+        'students',
+        'attendance_records',
+        'schedules',
+        'class_teacher',
+      ],
+    });
   }
 
   async findOne(class_id: string) {
     return await this.classRepository.findOne({
       where: { id: class_id },
-      relations: ['students', 'attendance_records', 'schedules'],
+      relations: [
+        'students',
+        'attendance_records',
+        'schedules',
+        'class_teacher',
+      ],
     });
   }
 
@@ -74,9 +94,7 @@ export class ClassService {
     }
 
     if (schedules && schedules.length > 0) {
-      newScheduleEntities = await this.scheduleRepository.find({
-        where: { id: In(schedules) },
-      });
+      newScheduleEntities = await this.scheduleService.findMany(schedules);
     }
 
     if (class_teacher) {
@@ -104,5 +122,33 @@ export class ClassService {
     });
 
     return updateClass;
+  }
+
+  async deleteClass(class_id: string) {
+    await this.classRepository.delete(class_id);
+  }
+
+  async addStudents(class_id: string, students: Student[]) {
+    const classObj = await this.classRepository.findOne({
+      where: { id: class_id },
+    });
+  }
+
+  async addSchedule(class_id: string, schedule: Schedule) {
+    const classObj = await this.classRepository.findOne({
+      where: { id: class_id },
+    });
+
+    if (!classObj) {
+      throw new NotFoundException('Cannot find class');
+    }
+
+    classObj.schedules = [...classObj.schedules, schedule];
+
+    await this.classRepository.save(classObj);
+  }
+
+  async findById(class_id: string) {
+    return await this.classRepository.findOne({ where: { id: class_id } });
   }
 }

@@ -13,7 +13,7 @@ import { TeachersService } from './teachers.service';
 import { JwtAuthGuard } from 'src/guards/auth.guard';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
 
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 @Controller('teachers')
 export class TeachersController {
   constructor(private readonly teachersService: TeachersService) {}

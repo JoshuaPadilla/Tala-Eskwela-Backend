@@ -11,6 +11,7 @@ import { TeacherInterface } from 'src/common/interfaces/teacher.interface';
 import { hashPassword } from 'src/common/helpers/passwordHelpers';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { NotFoundError } from 'rxjs';
+import { Class } from 'src/endpoints/class/entities/class.entity';
 
 @Injectable()
 export class TeachersService {
@@ -33,7 +34,7 @@ export class TeachersService {
   }
 
   async findAll(): Promise<TeacherInterface[]> {
-    return this.teacherRepository.find();
+    return this.teacherRepository.find({ relations: ['advisory_class'] });
   }
 
   async findByEmail(email: string) {
@@ -48,6 +49,7 @@ export class TeachersService {
   async findById(id: string) {
     const teacher = await this.teacherRepository.findOne({
       where: { id },
+      relations: ['advisory_class'],
     });
 
     if (!teacher) {
@@ -76,5 +78,17 @@ export class TeachersService {
       throw new BadRequestException('Teacher not found');
     }
     await this.teacherRepository.remove(teacher);
+  }
+
+  async addClass(id: string, classObj: Class) {
+    const teacher = await this.teacherRepository.findOne({ where: { id } });
+
+    if (!teacher) {
+      return new NotFoundException('No teacher found');
+    }
+
+    teacher.advisory_class = classObj;
+
+    await this.teacherRepository.save(teacher);
   }
 }

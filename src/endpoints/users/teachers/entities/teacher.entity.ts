@@ -54,5 +54,8 @@ export class Teacher {
 
   //relations
 
+  @OneToOne(() => Class, (c) => c.class_teacher)
+  @JoinColumn()
+  advisory_class: Class;
   //
 }

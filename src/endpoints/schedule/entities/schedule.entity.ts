@@ -29,8 +29,7 @@ export class Schedule {
   @JoinColumn() // FK column will be class_id
   class: Class;
 
-  @ManyToOne(() => Subject, (subject) => subject.schedules, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(() => Subject, (s) => s.schedules, { onDelete: 'CASCADE' })
+  @JoinColumn() // FK column will be class_id
   subject: Subject;
 }

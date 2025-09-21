@@ -6,9 +6,9 @@ import { UUID } from 'typeorm/driver/mongodb/bson.typings';
 export class UpdateClassDto extends PartialType(CreateClassDto) {
   @IsOptional()
   @IsArray()
-  students: UUID[];
+  students: string[];
 
   @IsOptional()
   @IsArray()
-  schedules: UUID[];
+  schedules: string[];
 }

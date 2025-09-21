@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Student } from './entities/student.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { RegisterStudentDto } from 'src/common/dto/register-student.dto';
 import { hashPassword } from 'src/common/helpers/passwordHelpers';
 
@@ -116,6 +116,12 @@ export class StudentsService {
 
     await this.cache.set('rfid_mode', RFID_MODE.READ);
     return this.studentRepository.save(studentToUpdate);
+  }
+
+  async findMany(ids: string[]) {
+    return await this.studentRepository.find({
+      where: { id: In(ids) },
+    });
   }
 
   // getters and setters

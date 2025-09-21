@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 import { Subject } from './entities/subject.entity';
-import { UUID } from 'typeorm/driver/mongodb/bson.typings';
 import { UpdateSubjectDto } from './dto/update-schedule.dto';
+import { Schedule } from '../schedule/entities/schedule.entity';
 
 @Injectable()
 export class SubjectService {
@@ -36,5 +36,19 @@ export class SubjectService {
 
   async deleteSubject(subject_id) {
     await this.subjectRepository.delete(subject_id);
+  }
+
+  async addSchedules(subject_id: string, schedules: Schedule[]) {
+    const subject = await this.subjectRepository.findOne({
+      where: { id: subject_id },
+    });
+
+    if (!subject) {
+      throw new NotFoundException('Cannot find Subject');
+    }
+
+    subject.schedules = [...subject.schedules, ...schedules];
+
+    await this.subjectRepository.save(subject);
   }
 }

@@ -33,7 +33,7 @@ export class Class {
 
   // Relations
 
-  @OneToOne(() => Teacher)
+  @OneToOne(() => Teacher, (t) => t.advisory_class)
   @JoinColumn()
   class_teacher: Teacher;
 
