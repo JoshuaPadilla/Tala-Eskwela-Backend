@@ -42,4 +42,9 @@ export class ClassController {
   deleteClass(@Param('id') id: string) {
     this.classService.deleteClass(id);
   }
+
+  @Post('add/:id')
+  addStudents(@Param('id') class_id: string, @Body() student_ids: string[]) {
+    this.classService.addStudents(class_id, student_ids);
+  }
 }

@@ -33,8 +33,23 @@ export class TeachersService {
     return newTeacher;
   }
 
-  async findAll(): Promise<TeacherInterface[]> {
-    return this.teacherRepository.find({ relations: ['advisory_class'] });
+  async findAll(query: Partial<Omit<Teacher, 'password'>>) {
+    const qb = this.teacherRepository
+      .createQueryBuilder('teacher')
+      .leftJoinAndSelect('teacher.advisory_class', 'advisory_class');
+
+    Object.entries(query).forEach(([key, value]) => {
+      if (value !== undefined) {
+        if (key === 'advisory_class' && value === 'null') {
+          // special case → advisory_class is NULL
+          qb.andWhere('teacher.advisory_class IS NULL');
+        } else {
+          qb.andWhere(`teacher.${key} = :${key}`, { [key]: value });
+        }
+      }
+    });
+
+    return qb.getMany();
   }
 
   async findByEmail(email: string) {

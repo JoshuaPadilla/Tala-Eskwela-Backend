@@ -6,20 +6,22 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
 import { TeachersService } from './teachers.service';
 import { JwtAuthGuard } from 'src/guards/auth.guard';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
+import { Teacher } from './entities/teacher.entity';
 
 // @UseGuards(JwtAuthGuard)
 @Controller('teachers')
 export class TeachersController {
   constructor(private readonly teachersService: TeachersService) {}
   @Get()
-  findAll() {
-    return this.teachersService.findAll();
+  findAll(@Query() query: Partial<Omit<Teacher, 'password'>>) {
+    return this.teachersService.findAll(query);
   }
   @Get(':id')
   findOne(@Param('id') id: string) {

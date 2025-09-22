@@ -128,10 +128,32 @@ export class ClassService {
     await this.classRepository.delete(class_id);
   }
 
-  async addStudents(class_id: string, students: Student[]) {
+  async addStudents(class_id: string, students_ids: string[]) {
+    const students = await this.studentRepository.find({
+      where: { id: In(students_ids) },
+    });
+
     const classObj = await this.classRepository.findOne({
       where: { id: class_id },
     });
+
+    if (!classObj) {
+      throw new NotFoundException('Cannot find class');
+    }
+
+    if (students.length === 0) {
+      throw new NotFoundException('No students found in the ids');
+    }
+
+    for (const student of students) {
+      student.class = classObj;
+    }
+
+    classObj.students = [...classObj.students, ...students];
+    const savedClass = await this.classRepository.save(classObj);
+    await this.studentRepository.save(students);
+
+    return await this.classRepository.findOne({ where: { id: savedClass.id } });
   }
 
   async addSchedule(class_id: string, schedule: Schedule) {
