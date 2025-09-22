@@ -41,6 +41,7 @@ export class SubjectService {
   async addSchedules(subject_id: string, schedules: Schedule[]) {
     const subject = await this.subjectRepository.findOne({
       where: { id: subject_id },
+      relations: ['schedules'],
     });
 
     if (!subject) {

@@ -54,7 +54,7 @@ export class Teacher {
 
   //relations
 
-  @OneToOne(() => Class, (c) => c.class_teacher)
+  @OneToOne(() => Class, (c) => c.class_teacher, { onDelete: 'SET NULL' })
   @JoinColumn()
   advisory_class: Class;
   //

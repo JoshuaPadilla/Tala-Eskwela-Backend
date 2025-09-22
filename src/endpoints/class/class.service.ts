@@ -150,15 +150,16 @@ export class ClassService {
     }
 
     classObj.students = [...classObj.students, ...students];
-    const savedClass = await this.classRepository.save(classObj);
+    await this.classRepository.save(classObj);
     await this.studentRepository.save(students);
 
-    return await this.classRepository.findOne({ where: { id: savedClass.id } });
+    return students;
   }
 
   async addSchedule(class_id: string, schedule: Schedule) {
     const classObj = await this.classRepository.findOne({
       where: { id: class_id },
+      relations: ['schedules'],
     });
 
     if (!classObj) {

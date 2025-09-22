@@ -55,6 +55,7 @@ export class TeachersService {
   async findByEmail(email: string) {
     const teacher = await this.teacherRepository.findOne({
       where: { email: email },
+      relations: ['advisory_class'],
       // relations: ['teached_courses', 'students'],
     });
 
@@ -84,7 +85,12 @@ export class TeachersService {
       throw new BadRequestException('Teacher not found');
     }
 
-    return this.teacherRepository.save(teacherToUpdate);
+    await this.teacherRepository.save(teacherToUpdate);
+
+    return this.teacherRepository.findOne({
+      where: { id: id },
+      relations: ['advisory_class'],
+    });
   }
 
   async deleteTeacher(id: string) {

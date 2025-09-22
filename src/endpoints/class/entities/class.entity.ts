@@ -33,7 +33,7 @@ export class Class {
 
   // Relations
 
-  @OneToOne(() => Teacher, (t) => t.advisory_class)
+  @OneToOne(() => Teacher, (t) => t.advisory_class, { onDelete: 'SET NULL' })
   @JoinColumn()
   class_teacher: Teacher;
 
