@@ -1,10 +1,26 @@
-import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import {
+  ConnectedSocket,
+  MessageBody,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io'; // Corrected import for Socket
+import { Attendance } from 'src/endpoints/attendance/entities/attendance.entity';
 
 @WebSocketGateway({ cors: '*' })
 export class RfidTapGateway {
   @WebSocketServer()
-  server;
+  server: Server;
+
+  @SubscribeMessage('join_class')
+  handleJoinClass(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() body: { class_id: string },
+  ) {
+    client.join(body.class_id);
+    console.log(`Client ${client.id} joined room ${body.class_id}`);
+  }
 
   handleConnection(client: Socket) {
     console.log(`A new client connected: ${client.id}`);

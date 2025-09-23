@@ -28,7 +28,6 @@ export class StudentsController {
   @HttpCode(HttpStatus.OK)
   @Get()
   findAll(@Query() query: Partial<Omit<Student, 'password'>>) {
-    console.log(query);
     return this.studentsService.findAll(query);
   }
 

@@ -39,8 +39,6 @@ export class StudentsService {
   }
 
   async findAll(query: Partial<Omit<Student, 'password'>>): Promise<Student[]> {
-    console.log(query);
-
     const qb = this.studentRepository
       .createQueryBuilder('student')
       .leftJoinAndSelect('student.class', 'class');
@@ -73,6 +71,7 @@ export class StudentsService {
   async findByRfidUid(uid: string) {
     const student = await this.studentRepository.findOne({
       where: { rfid_tag_uid: uid },
+      relations: ['class', 'parent'],
     });
 
     if (!student) {

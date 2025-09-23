@@ -50,4 +50,4 @@ export class ClassController {
   ) {
     return this.classService.addStudents(class_id, body.student_ids);
   }
-}
+} 
