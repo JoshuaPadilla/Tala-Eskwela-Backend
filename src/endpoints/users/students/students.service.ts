@@ -38,10 +38,23 @@ export class StudentsService {
     return newStudent;
   }
 
-  async findAll(): Promise<Student[]> {
-    const students = await this.studentRepository.find();
+  async findAll(query: Partial<Omit<Student, 'password'>>): Promise<Student[]> {
+    console.log(query);
 
-    return students;
+    const qb = this.studentRepository
+      .createQueryBuilder('student')
+      .leftJoinAndSelect('student.class', 'class');
+
+    Object.entries(query).forEach(([key, value]) => {
+      if (key === 'class' && value === 'null') {
+        // special case → advisory_class is NULL
+        qb.andWhere('student.class IS NULL');
+      } else {
+        qb.andWhere(`student.${key} = :${key}`, { [key]: value });
+      }
+    });
+
+    return qb.getMany();
   }
 
   async findById(id: string): Promise<Student> {

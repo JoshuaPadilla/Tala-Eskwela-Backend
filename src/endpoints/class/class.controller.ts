@@ -44,7 +44,10 @@ export class ClassController {
   }
 
   @Post('add/:id')
-  addStudents(@Param('id') class_id: string, @Body() student_ids: string[]) {
-    this.classService.addStudents(class_id, student_ids);
+  addStudents(
+    @Param('id') class_id: string,
+    @Body() body: { student_ids: string[] },
+  ) {
+    return this.classService.addStudents(class_id, body.student_ids);
   }
 }

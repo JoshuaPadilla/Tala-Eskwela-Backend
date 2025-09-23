@@ -135,6 +135,7 @@ export class ClassService {
 
     const classObj = await this.classRepository.findOne({
       where: { id: class_id },
+      relations: ['students'],
     });
 
     if (!classObj) {
@@ -149,9 +150,7 @@ export class ClassService {
       student.class = classObj;
     }
 
-    classObj.students = [...classObj.students, ...students];
     await this.classRepository.save(classObj);
-    await this.studentRepository.save(students);
 
     return students;
   }

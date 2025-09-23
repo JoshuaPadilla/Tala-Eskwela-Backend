@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
@@ -16,6 +17,7 @@ import { UpdateStudentDto } from './dto/update-student.dto';
 import { User_Roles } from 'src/decorators/roles.decorator';
 import { Roles } from 'src/enums/role.enum';
 import { RolesGuard } from 'src/guards/role.guard';
+import { Student } from './entities/student.entity';
 
 // @User_Roles(Roles.TEACHER)
 // @UseGuards(JwtAuthGuard, RolesGuard)
@@ -25,8 +27,9 @@ export class StudentsController {
 
   @HttpCode(HttpStatus.OK)
   @Get()
-  findAll() {
-    return this.studentsService.findAll();
+  findAll(@Query() query: Partial<Omit<Student, 'password'>>) {
+    console.log(query);
+    return this.studentsService.findAll(query);
   }
 
   @Get(':id')
