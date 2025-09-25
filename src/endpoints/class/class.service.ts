@@ -67,6 +67,7 @@ export class ClassService {
         'attendance_records',
         'schedules',
         'class_teacher',
+        'schedules.subject',
       ],
     });
   }
