@@ -62,10 +62,15 @@ export class TeachersService {
     return teacher;
   }
 
-  async findById(id: string) {
+  async findById(id: string, relations?: string[]) {
     const teacher = await this.teacherRepository.findOne({
       where: { id },
-      relations: ['advisory_class'],
+      relations: [
+        'advisory_class',
+        'advisory_class.students',
+        'advisory_class.schedules',
+        'advisory_class.attendance_records',
+      ],
     });
 
     if (!teacher) {

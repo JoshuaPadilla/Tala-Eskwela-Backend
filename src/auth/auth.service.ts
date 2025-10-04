@@ -140,7 +140,10 @@ export class AuthService {
         return student;
       case Roles.TEACHER:
         const { password: teacherPassword, ...teacher } =
-          await this.teacherService.findById(user.userId);
+          await this.teacherService.findById(user.userId, [
+            'advisory_class',
+            'advisory_class.schedules',
+          ]);
         return teacher;
       case Roles.ADMIN:
         const { password: adminPassword, ...admin } =

@@ -5,6 +5,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
@@ -59,6 +60,7 @@ export class Student {
   attendances: Attendance[];
 
   @ManyToOne(() => Class, (classes) => classes.students)
+  @JoinColumn({ name: 'class_id' }) // <-- Add this decorator
   class: Class;
 
   @ManyToOne(() => Parent, (parent) => parent.students)

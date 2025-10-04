@@ -35,7 +35,7 @@ import { AdminModule } from './endpoints/admin/admin.module';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        url: configService.get<string>('EXTERNAL_DB_URL'),
+        url: configService.get<string>('DB_CONNECTION_STRING'),
         ssl: {
           rejectUnauthorized: true,
         },

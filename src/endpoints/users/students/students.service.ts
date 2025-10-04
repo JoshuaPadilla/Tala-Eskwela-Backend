@@ -14,6 +14,7 @@ import { hashPassword } from 'src/common/helpers/passwordHelpers';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { Cache } from 'cache-manager';
 import { RFID_MODE } from 'src/enums/rfid_mode.enum';
+import { Class } from 'src/endpoints/class/entities/class.entity';
 
 @Injectable()
 export class StudentsService {
@@ -56,7 +57,10 @@ export class StudentsService {
   }
 
   async findById(id: string): Promise<Student> {
-    const student = await this.studentRepository.findOne({ where: { id } });
+    const student = await this.studentRepository.findOne({
+      where: { id },
+      relations: ['class'],
+    });
     if (!student) {
       throw new NotFoundException('No Student found');
     }
@@ -134,6 +138,14 @@ export class StudentsService {
     return await this.studentRepository.find({
       where: { id: In(ids) },
     });
+  }
+
+  async addClass(students: Student[], classObj: Class) {
+    for (const student of students) {
+      student.class = classObj;
+    }
+
+    return await this.studentRepository.save(students);
   }
 
   // getters and setters

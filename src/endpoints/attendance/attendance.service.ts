@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { ATTENDANCE_STATUS } from 'src/enums/attendance-status.enum';
 import { RfidTapGateway } from 'src/gateways/rfid-tap-.gateway';
 import { ClassService } from '../class/class.service';
+import { Schedule } from '../schedule/entities/schedule.entity';
 
 // 957ac17f-0860-49a3-a04e-c31a98ec929b - student
 
@@ -30,7 +31,10 @@ export class AttendanceService {
       throw new NotFoundException('Student not found');
     }
 
-    const classObj = student.class;
+    const classObj = await this.classService.findById(student.class?.id, [
+      'schedules',
+      'schedules.subject',
+    ]);
 
     if (!classObj) {
       throw new NotFoundException(
@@ -38,10 +42,17 @@ export class AttendanceService {
       );
     }
 
-    const newAttendance = await this.attendanceRepository.create({
+    const currentSchedule = this.getCurrentSchedule(classObj.schedules);
+
+    if (!currentSchedule) {
+      throw new NotFoundException('No Schedule within this time');
+    }
+    const status = this.getStatus(currentSchedule);
+
+    const newAttendance = this.attendanceRepository.create({
       class: classObj,
       student: student,
-      status: ATTENDANCE_STATUS.PRESENT,
+      status: status,
     });
 
     const savedAttendance = await this.attendanceRepository.save(newAttendance);
@@ -83,5 +94,46 @@ export class AttendanceService {
       .getMany(); // Execute the query and get an array of results
 
     return currentClassAttendance;
+  }
+
+  private getCurrentSchedule(schedules: Schedule[]) {
+    const now = new Date();
+
+    const currentDay = new Date()
+      .toLocaleString('en-US', { weekday: 'long' })
+      .toLowerCase();
+
+    return schedules.find((schedule) => {
+      // if (schedule.day_of_week.toLowerCase() !== currentDay) return undefined;
+
+      const today = new Date().toISOString().split('T')[0];
+      const start = new Date(`${today}T${schedule.start_time}`);
+      const end = new Date(`${today}T${schedule.end_time}`);
+
+      return start <= now && end >= now;
+    });
+  }
+
+  private getStatus(currentSchedule: Schedule) {
+    const now = new Date();
+
+    const today = new Date().toISOString().split('T')[0];
+    const start = new Date(`${today}T${currentSchedule.start_time}`);
+    const end = new Date(`${today}T${currentSchedule.end_time}`);
+
+    const diffMinutes = (now.getTime() - start.getTime()) / 1000 / 60;
+    let status = ATTENDANCE_STATUS.ABSENT;
+
+    if (diffMinutes <= 0) {
+      status = ATTENDANCE_STATUS.PRESENT; // early or exact
+    } else if (diffMinutes <= 10) {
+      status = ATTENDANCE_STATUS.PRESENT;
+    } else if (diffMinutes <= 20) {
+      status = ATTENDANCE_STATUS.LATE;
+    } else if (diffMinutes > 30 && now <= end) {
+      status = ATTENDANCE_STATUS.ABSENT;
+    }
+
+    return status;
   }
 }

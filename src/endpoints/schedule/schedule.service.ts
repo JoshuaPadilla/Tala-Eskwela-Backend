@@ -73,4 +73,22 @@ export class ScheduleService {
       where: { id: In(schedule_ids) },
     });
   }
+
+  async getTodaysSchedules(class_id: string) {
+    const classObj = await this.classService.findOne(class_id);
+
+    if (!classObj) {
+      throw new NotFoundException('cannot find class');
+    }
+
+    const currentDay = new Date()
+      .toLocaleString('en-US', { weekday: 'long' })
+      .toLowerCase();
+
+    const todaysSchedules = classObj.schedules.filter((schedule) => {
+      return schedule;
+    });
+
+    return todaysSchedules;
+  }
 }

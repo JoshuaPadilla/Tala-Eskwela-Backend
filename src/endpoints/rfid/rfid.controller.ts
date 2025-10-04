@@ -16,17 +16,9 @@ export class RfidController {
     private readonly studentService: StudentsService,
   ) {}
 
+  @HttpCode(HttpStatus.OK)
   @Post()
   async tap(@Body() body: { rfid_tag_uid: string }) {
-    console.log('Hello Nigga!');
-    this.rfidService.rfid_tap(body.rfid_tag_uid);
-  }
-
-  @HttpCode(HttpStatus.OK)
-  @Post('tap')
-  async readRfid(@Body() body: { uid: string }) {
-    if (body.uid !== '2E60D65') {
-      throw new NotFoundException(`User with ID ${body.uid} not found.`);
-    }
+    return await this.rfidService.rfid_tap(body.rfid_tag_uid);
   }
 }

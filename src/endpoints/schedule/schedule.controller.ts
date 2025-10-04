@@ -30,4 +30,9 @@ export class ScheduleController {
   deleteSchedule(@Param('id') id: string) {
     this.scheduleService.deleteSchedule(id);
   }
+
+  @Get('todayschedules/:class_id')
+  getTodaysSchedules(@Param('class_id') class_id: string) {
+    return this.scheduleService.getTodaysSchedules(class_id);
+  }
 }

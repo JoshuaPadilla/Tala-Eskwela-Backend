@@ -9,6 +9,7 @@ import { Schedule } from '../schedule/entities/schedule.entity';
 import { Teacher } from '../users/teachers/entities/teacher.entity';
 import { TeachersService } from '../users/teachers/teachers.service';
 import { ScheduleService } from '../schedule/schedule.service';
+import { StudentsService } from '../users/students/students.service';
 
 @Injectable()
 export class ClassService {
@@ -19,6 +20,7 @@ export class ClassService {
     private studentRepository: Repository<Student>,
     private readonly scheduleService: ScheduleService,
     private readonly teacherService: TeachersService,
+    private readonly studentService: StudentsService,
   ) {}
 
   async createClass(createClassDto: CreateClassDto) {
@@ -143,6 +145,10 @@ export class ClassService {
       throw new NotFoundException('Cannot find class');
     }
 
+    const updatedStudents = [...classObj.students, ...students];
+
+    classObj.students = updatedStudents;
+
     if (students.length === 0) {
       throw new NotFoundException('No students found in the ids');
     }
@@ -151,9 +157,13 @@ export class ClassService {
       student.class = classObj;
     }
 
+    const studentsAddedClass = await this.studentService.addClass(
+      students,
+      classObj,
+    );
     await this.classRepository.save(classObj);
 
-    return students;
+    return studentsAddedClass;
   }
 
   async addSchedule(class_id: string, schedule: Schedule) {
@@ -171,7 +181,10 @@ export class ClassService {
     await this.classRepository.save(classObj);
   }
 
-  async findById(class_id: string) {
-    return await this.classRepository.findOne({ where: { id: class_id } });
+  async findById(class_id: string, relations?: string[]) {
+    return await this.classRepository.findOne({
+      where: { id: class_id },
+      relations: relations,
+    });
   }
 }
