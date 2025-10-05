@@ -15,6 +15,7 @@ import {
 } from 'typeorm';
 import { Class } from 'src/endpoints/class/entities/class.entity';
 import { Attendance } from 'src/endpoints/attendance/entities/attendance.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Student {
@@ -40,6 +41,7 @@ export class Student {
   email: string;
 
   @Column({ type: 'text' })
+  @Exclude()
   password: string;
 
   @Column({ type: 'text' })

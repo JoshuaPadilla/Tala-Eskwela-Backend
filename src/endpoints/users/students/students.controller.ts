@@ -52,4 +52,11 @@ export class StudentsController {
   deleteStudent(@Param('id') id: string) {
     this.studentsService.deleteStudent(id);
   }
+
+  @Post('addParent')
+  addParentToStudent(@Body() body: { student_id: string; parent_id: string }) {
+    console.log(body);
+    const { student_id, parent_id } = body;
+    return this.studentsService.addParent(student_id, parent_id);
+  }
 }

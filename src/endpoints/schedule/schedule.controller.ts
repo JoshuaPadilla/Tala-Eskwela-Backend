@@ -25,6 +25,11 @@ export class ScheduleController {
     return this.scheduleService.findAll();
   }
 
+  @Get(':sched_id')
+  findOne(@Param('sched_id') sched_id: string) {
+    return this.scheduleService.findOne(sched_id);
+  }
+
   @HttpCode(HttpStatus.OK)
   @Delete(':id')
   deleteSchedule(@Param('id') id: string) {

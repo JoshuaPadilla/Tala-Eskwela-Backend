@@ -29,6 +29,6 @@ export class Attendance {
   @ManyToOne(() => Student, (student) => student.attendances)
   student: Student;
 
-    @ManyToOne(() => Class, (aclass) => aclass.attendance_records)
+  @ManyToOne(() => Class, (aclass) => aclass.attendance_records)
   class: Class;
 }

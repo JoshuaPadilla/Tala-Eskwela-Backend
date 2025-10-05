@@ -44,5 +44,6 @@ export class Class {
   attendance_records: Attendance[];
 
   @OneToMany(() => Schedule, (schedule) => schedule.class, { cascade: true })
+  @JoinColumn({ name: 'scheduleId' }) // Link to the foreign key column above
   schedules: Schedule[];
 }

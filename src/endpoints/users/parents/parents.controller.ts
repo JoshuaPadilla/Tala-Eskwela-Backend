@@ -43,7 +43,6 @@ export class ParentsController {
     @Req() req: Request,
   ) {
     const user: any = req.user;
-    console.log(user);
 
     if (!user) {
       throw new BadRequestException();

@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Parent {
@@ -31,6 +32,7 @@ export class Parent {
   email: string;
 
   @Column({ type: 'text' })
+  @Exclude()
   password: string;
 
   @Column({ type: 'text' })

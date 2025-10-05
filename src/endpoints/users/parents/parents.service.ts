@@ -10,6 +10,7 @@ import { Repository } from 'typeorm';
 import { hashPassword } from 'src/common/helpers/passwordHelpers';
 import { ParentInterface } from 'src/common/interfaces/parent.interface';
 import { UpdateParentDto } from './dto/update-parent.dto';
+import { Student } from '../students/entities/student.entity';
 
 @Injectable()
 export class ParentsService {
@@ -65,5 +66,20 @@ export class ParentsService {
       throw new BadRequestException('Parent not found');
     }
     await this.parentRepository.remove(parent);
+  }
+
+  async addStudent(parent_id: string, student: Student) {
+    const parent = await this.parentRepository.findOne({
+      where: { id: parent_id },
+      relations: ['students'],
+    });
+
+    if (!parent) {
+      throw new NotFoundException('parent not found');
+    }
+
+    parent.students = [...parent.students, student];
+
+    return await this.parentRepository.save(parent);
   }
 }

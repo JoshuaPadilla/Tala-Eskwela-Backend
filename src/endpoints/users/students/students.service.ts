@@ -15,6 +15,7 @@ import { UpdateStudentDto } from './dto/update-student.dto';
 import { Cache } from 'cache-manager';
 import { RFID_MODE } from 'src/enums/rfid_mode.enum';
 import { Class } from 'src/endpoints/class/entities/class.entity';
+import { ParentsService } from '../parents/parents.service';
 
 @Injectable()
 export class StudentsService {
@@ -22,6 +23,7 @@ export class StudentsService {
     @InjectRepository(Student)
     private studentRepository: Repository<Student>,
     @Inject('CACHE_MANAGER') private cache: Cache,
+    private readonly parentService: ParentsService,
   ) {}
 
   private studentIdToRegister: string | null = null;
@@ -59,7 +61,7 @@ export class StudentsService {
   async findById(id: string): Promise<Student> {
     const student = await this.studentRepository.findOne({
       where: { id },
-      relations: ['class'],
+      relations: ['class', 'parent'],
     });
     if (!student) {
       throw new NotFoundException('No Student found');
@@ -137,6 +139,7 @@ export class StudentsService {
   async findMany(ids: string[]) {
     return await this.studentRepository.find({
       where: { id: In(ids) },
+      relations: ['parent'],
     });
   }
 
@@ -146,6 +149,27 @@ export class StudentsService {
     }
 
     return await this.studentRepository.save(students);
+  }
+
+  async addParent(student_id: string, parent_id: string) {
+    const student = await this.studentRepository.findOne({
+      where: { id: student_id },
+      relations: ['parent'],
+    });
+
+    if (!student) {
+      throw new NotFoundException('student not found');
+    }
+
+    const parent = await this.parentService.addStudent(parent_id, student);
+
+    student.parent = parent;
+
+    await this.studentRepository.save(student);
+
+    const { students, ...parentToReturn } = parent;
+
+    return parentToReturn;
   }
 
   // getters and setters

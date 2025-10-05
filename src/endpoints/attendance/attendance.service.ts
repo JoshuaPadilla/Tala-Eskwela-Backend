@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { StudentsService } from '../users/students/students.service';
 import { Cache } from '@nestjs/cache-manager';
 import { NotificationsService } from 'src/notifications/notifications.service';
@@ -45,7 +50,7 @@ export class AttendanceService {
     const currentSchedule = this.getCurrentSchedule(classObj.schedules);
 
     if (!currentSchedule) {
-      throw new NotFoundException('No Schedule within this time');
+      throw new ForbiddenException('No Schedule within this time');
     }
     const status = this.getStatus(currentSchedule);
 
@@ -96,6 +101,34 @@ export class AttendanceService {
     return currentClassAttendance;
   }
 
+  async getAttendanceByCurrentSched(class_id: string, schedule_id?: string) {
+    const classObj = await this.classService.findById(class_id);
+
+    if (!classObj) throw new NotFoundException('No class found');
+
+    const schedAllAttendance = await this.attendanceRepository
+      .createQueryBuilder('attendance')
+      .leftJoinAndSelect('attendance.class', 'class')
+      .leftJoinAndSelect('attendance.student', 'student')
+      .leftJoinAndSelect('class.schedules', 'schedules')
+      .where('class.id = :classId', { classId: classObj.id })
+      .andWhere('schedules.id = :scheduleId', { scheduleId: schedule_id }) // fixed here
+      .getMany();
+
+    const currentMonth = new Date().getMonth();
+    const currentDate = new Date().getDate() - 1;
+    const currentSchedAttendance = schedAllAttendance.filter((att) => {
+      const attMonth = att.timestamp.getMonth();
+      const attDate = att.timestamp.getDate();
+
+      return attMonth === currentMonth && attDate === currentDate;
+    });
+
+    console.log(currentSchedAttendance);
+
+    return currentSchedAttendance;
+  }
+
   private getCurrentSchedule(schedules: Schedule[]) {
     const now = new Date();
 
@@ -104,7 +137,7 @@ export class AttendanceService {
       .toLowerCase();
 
     return schedules.find((schedule) => {
-      // if (schedule.day_of_week.toLowerCase() !== currentDay) return undefined;
+      if (schedule.day_of_week.toLowerCase() !== currentDay) return undefined;
 
       const today = new Date().toISOString().split('T')[0];
       const start = new Date(`${today}T${schedule.start_time}`);

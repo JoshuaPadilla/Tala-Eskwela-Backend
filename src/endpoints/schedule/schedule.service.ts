@@ -58,6 +58,13 @@ export class ScheduleService {
     });
   }
 
+  async findOne(sched_id: string) {
+    return await this.scheduleRepository.findOne({
+      where: { id: sched_id },
+      relations: ['class', 'subject', 'class.students'],
+    });
+  }
+
   async deleteSchedule(schedule_id: string) {
     await this.scheduleRepository.delete(schedule_id);
   }

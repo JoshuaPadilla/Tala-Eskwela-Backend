@@ -35,8 +35,4 @@ export class RegisterStudentDto {
   @IsString()
   @IsNotEmpty()
   password: string;
-
-  @IsOptional()
-  @IsArray()
-  teachers: Teacher[];
 }
