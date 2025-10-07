@@ -1,6 +1,7 @@
 // src/notifications/notifications.service.ts
 import { Injectable } from '@nestjs/common';
 import { Expo, ExpoPushTicket } from 'expo-server-sdk';
+import { NotificationData } from './interfaces/notification-data.interface';
 
 @Injectable()
 export class NotificationsService {
@@ -10,7 +11,10 @@ export class NotificationsService {
     this.expo = new Expo();
   }
 
-  async sendAttendanceNotification(expoPushTokens: string[], data?: object) {
+  async sendAttendanceNotification(
+    expoPushTokens: string[],
+    data?: NotificationData,
+  ) {
     if (!Expo.isExpoPushToken(expoPushTokens[0])) {
       console.error(
         `Push token ${expoPushTokens[0]} is not a valid Expo push token`,
@@ -21,12 +25,7 @@ export class NotificationsService {
     const messages = expoPushTokens.map((token) => ({
       to: token,
       sound: 'default',
-      title: 'Attendance ',
-      body: 'Subject Science for time 10:00 - 11:30 AM',
-      data:
-        data && typeof data === 'object'
-          ? (data as Record<string, unknown>)
-          : undefined,
+      ...data,
     }));
 
     // The Expo push notification service will handle the rest.

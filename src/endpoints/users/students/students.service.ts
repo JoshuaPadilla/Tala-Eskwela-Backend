@@ -44,7 +44,8 @@ export class StudentsService {
   async findAll(query: Partial<Omit<Student, 'password'>>): Promise<Student[]> {
     const qb = this.studentRepository
       .createQueryBuilder('student')
-      .leftJoinAndSelect('student.class', 'class');
+      .leftJoinAndSelect('student.class', 'class')
+      .leftJoinAndSelect('student.parent', 'parent');
 
     Object.entries(query).forEach(([key, value]) => {
       if (key === 'class' && value === 'null') {
@@ -61,7 +62,7 @@ export class StudentsService {
   async findById(id: string): Promise<Student> {
     const student = await this.studentRepository.findOne({
       where: { id },
-      relations: ['class', 'parent'],
+      relations: ['class', 'parent', 'parent.push_token'],
     });
     if (!student) {
       throw new NotFoundException('No Student found');
@@ -134,13 +135,6 @@ export class StudentsService {
 
     await this.cache.set('rfid_mode', RFID_MODE.READ);
     return this.studentRepository.save(studentToUpdate);
-  }
-
-  async findMany(ids: string[]) {
-    return await this.studentRepository.find({
-      where: { id: In(ids) },
-      relations: ['parent'],
-    });
   }
 
   async addClass(students: Student[], classObj: Class) {

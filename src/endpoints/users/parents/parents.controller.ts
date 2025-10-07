@@ -59,4 +59,10 @@ export class ParentsController {
   async deleteParent(@Param('id') id: string) {
     await this.parentsService.deleteParent(id);
   }
+
+  @Get('add_student/:student_id')
+  async selectParentToAdd(@Param('student_id') student_id: string) {
+    console.log(student_id);
+    return this.parentsService.getParentWithoutSpecificStudent(student_id);
+  }
 }

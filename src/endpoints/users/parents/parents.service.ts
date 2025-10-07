@@ -33,6 +33,30 @@ export class ParentsService {
     return this.parentRepository.find();
   }
 
+  async getParentWithoutSpecificStudent(student_id: string) {
+    return (
+      this.parentRepository
+        .createQueryBuilder('parent')
+        // 1. LEFT JOIN the 'students' relation
+        // Alias the joined students table as 'student'
+        .leftJoin(
+          'parent.students',
+          'student',
+          // 2. Add a condition for the LEFT JOIN to only include the student ID we *don't* want.
+          // This is crucial for the logic: it tries to find the unwanted student.
+          'student.id = :studentId',
+          { studentId: student_id },
+        )
+        // 3. Select the Parent entity
+        .select('parent')
+        // 4. Filter the results
+        // The parent entity is included ONLY IF the LEFT JOIN *failed* to find a matching student.
+        // When the join fails, the 'student.id' column will be NULL for that parent row.
+        .where('student.id IS NULL')
+        .getMany()
+    ); // or .getOne() if you expect at most one such parent
+  }
+
   async findById(id: string): Promise<Parent> {
     const parent = await this.parentRepository.findOne({ where: { id } });
 

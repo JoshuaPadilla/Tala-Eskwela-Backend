@@ -8,6 +8,7 @@ import { NotificationsModule } from 'src/notifications/notifications.module';
 import { ClassService } from '../class/class.service';
 import { ClassModule } from '../class/class.module';
 import { AttendanceController } from './attendance.controller';
+import { ParentsModule } from '../users/parents/parents.module';
 
 @Module({
   providers: [AttendanceService],
@@ -17,6 +18,7 @@ import { AttendanceController } from './attendance.controller';
     StudentsModule,
     NotificationsModule,
     ClassModule,
+    ParentsModule,
   ],
   exports: [AttendanceService],
 })

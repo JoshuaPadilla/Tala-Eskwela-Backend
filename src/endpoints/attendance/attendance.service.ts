@@ -14,6 +14,7 @@ import { ATTENDANCE_STATUS } from 'src/enums/attendance-status.enum';
 import { RfidTapGateway } from 'src/gateways/rfid-tap-.gateway';
 import { ClassService } from '../class/class.service';
 import { Schedule } from '../schedule/entities/schedule.entity';
+import { ParentsService } from '../users/parents/parents.service';
 
 // 957ac17f-0860-49a3-a04e-c31a98ec929b - student
 
@@ -22,6 +23,7 @@ export class AttendanceService {
   constructor(
     private readonly studentService: StudentsService,
     private readonly classService: ClassService,
+    private readonly parentService: ParentsService,
     private readonly notificationsService: NotificationsService,
 
     @Inject('CACHE_MANAGER') private cache: Cache,
@@ -35,6 +37,8 @@ export class AttendanceService {
     if (!student) {
       throw new NotFoundException('Student not found');
     }
+
+    const parent = student.parent;
 
     const classObj = await this.classService.findById(student.class?.id, [
       'schedules',
@@ -62,7 +66,10 @@ export class AttendanceService {
 
     const savedAttendance = await this.attendanceRepository.save(newAttendance);
 
-    this.notificationsService.sendAttendanceNotification([student.push_token]);
+    this.notificationsService.sendAttendanceNotification([
+      student.push_token && student.push_token,
+      parent.push_token && parent.push_token,
+    ]);
 
     return savedAttendance;
   }
