@@ -25,6 +25,7 @@ import { SubjectModule } from './endpoints/subject/subject.module';
 import { ScheduleModule } from './endpoints/schedule/schedule.module';
 import { Admin } from './endpoints/admin/entities/admin.entity';
 import { AdminModule } from './endpoints/admin/admin.module';
+import { UploadModule } from './endpoints/upload/upload.module';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { AdminModule } from './endpoints/admin/admin.module';
       isGlobal: true,
     }),
     AdminModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [

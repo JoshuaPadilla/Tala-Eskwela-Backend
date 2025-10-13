@@ -93,7 +93,8 @@ export class ScheduleService {
       .toLowerCase();
 
     const todaysSchedules = classObj.schedules.filter((schedule) => {
-      return schedule;
+      return schedule.day_of_week === currentDay;
+      // return schedule;
     });
 
     return todaysSchedules;

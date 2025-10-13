@@ -19,6 +19,7 @@ export class RfidController {
   @HttpCode(HttpStatus.OK)
   @Post()
   async tap(@Body() body: { rfid_tag_uid: string }) {
+    console.log(body);
     return await this.rfidService.rfid_tap(body.rfid_tag_uid);
   }
 }

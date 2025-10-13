@@ -57,6 +57,7 @@ export class AttendanceService {
       throw new ForbiddenException('No Schedule within this time');
     }
     const status = this.getStatus(currentSchedule);
+    console.log(status);
 
     const newAttendance = this.attendanceRepository.create({
       class: classObj,
@@ -66,10 +67,16 @@ export class AttendanceService {
 
     const savedAttendance = await this.attendanceRepository.save(newAttendance);
 
-    this.notificationsService.sendAttendanceNotification([
-      student.push_token && student.push_token,
-      parent.push_token && parent.push_token,
-    ]);
+    this.notificationsService.sendAttendanceNotification(
+      [
+        student.push_token && student.push_token,
+        parent.push_token && parent.push_token,
+      ],
+      {
+        body: `${currentSchedule.start_time} - ${currentSchedule.end_time}`,
+        title: `${currentSchedule.subject.name}`,
+      },
+    );
 
     return savedAttendance;
   }
@@ -131,8 +138,6 @@ export class AttendanceService {
       return attMonth === currentMonth && attDate === currentDate;
     });
 
-    console.log(currentSchedAttendance);
-
     return currentSchedAttendance;
   }
 
@@ -161,8 +166,16 @@ export class AttendanceService {
     const start = new Date(`${today}T${currentSchedule.start_time}`);
     const end = new Date(`${today}T${currentSchedule.end_time}`);
 
-    const diffMinutes = (now.getTime() - start.getTime()) / 1000 / 60;
+    const diffMinutes = (now.getTime() - start.getTime()) / (1000 * 60) / 60;
+
     let status = ATTENDANCE_STATUS.ABSENT;
+
+    console.log(start);
+    console.log(now);
+    console.log(now.getTime() - start.getTime());
+    console.log(diffMinutes);
+    console.log('NOW:', now.getTime());
+    console.log('START:', start.getTime());
 
     if (diffMinutes <= 0) {
       status = ATTENDANCE_STATUS.PRESENT; // early or exact
