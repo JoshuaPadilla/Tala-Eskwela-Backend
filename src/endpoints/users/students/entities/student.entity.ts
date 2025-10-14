@@ -50,6 +50,9 @@ export class Student {
   @Column({ type: 'enum', enum: Roles, default: Roles.STUDENT })
   role: Roles;
 
+  @Column({ type: 'text', nullable: true })
+  profileUrl: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

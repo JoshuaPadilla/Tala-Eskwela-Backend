@@ -7,14 +7,30 @@ import {
   MaxFileSizeValidator,
   FileTypeValidator,
   Get,
+  Param,
+  UseGuards,
+  Request,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { use } from 'passport';
+import { JwtPayload } from 'src/common/types/jwt-payload.types';
+import { Roles } from 'src/enums/role.enum';
+import { JwtAuthGuard } from 'src/guards/auth.guard';
 import { S3Service } from 'src/services/s3.service';
+import { TeachersService } from '../users/teachers/teachers.service';
+import { StudentsService } from '../users/students/students.service';
+import { ParentsService } from '../users/parents/parents.service';
+import { UploadService } from './upload.service';
 
 @Controller('upload')
 export class UploadController {
-  constructor(private readonly s3Service: S3Service) {}
+  constructor(
+    private readonly s3Service: S3Service,
+    private readonly uploadService: UploadService,
+  ) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post('profile_picture')
   @UseInterceptors(FileInterceptor('profile_picture')) // 'picture' is the field name from your Expo form-data
   async uploadPicture(
@@ -28,13 +44,20 @@ export class UploadController {
       }),
     )
     file: Express.Multer.File,
+    @Request() req,
   ) {
-    const fileUrl = await this.s3Service.uploadFile(file);
+    const { user } = req;
+
+    if (!user) throw new UnauthorizedException();
+
+    const fileUrl = await this.s3Service.uploadProfile(file, user.userId);
+
+    await this.uploadService.updateProfile(user, fileUrl);
 
     // Return the URL to your Expo app
     return {
       message: 'File uploaded successfully',
-      url: fileUrl,
+      profileUrl: fileUrl,
     };
   }
 }

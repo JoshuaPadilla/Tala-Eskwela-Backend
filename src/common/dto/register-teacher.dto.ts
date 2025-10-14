@@ -28,4 +28,8 @@ export class RegisterTeacherDto {
   @IsString()
   @IsNotEmpty()
   password: string;
+
+  @IsString()
+  @IsOptional()
+  profileUrl: string;
 }

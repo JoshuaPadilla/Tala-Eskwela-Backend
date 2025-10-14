@@ -33,4 +33,8 @@ export class RegisterParentDto {
   @IsOptional()
   @IsString()
   push_token: string;
+
+  @IsString()
+  @IsOptional()
+  profileUrl: string;
 }

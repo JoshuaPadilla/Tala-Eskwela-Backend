@@ -131,6 +131,7 @@ export class AuthService {
   async checkAuth(user: any) {
     switch (user.role) {
       case Roles.PARENT:
+        console.log('FIRST HERE!!!s');
         const { password: parentPassword, ...parent } =
           await this.parentService.findById(user.userId);
         return parent;

@@ -41,6 +41,9 @@ export class Parent {
   @Column({ type: 'enum', enum: Roles, default: Roles.PARENT })
   role: Roles;
 
+  @Column({ type: 'text', nullable: true })
+  profileUrl: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

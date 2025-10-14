@@ -30,10 +30,13 @@ export class S3Service {
    * @param file The file object from Multer.
    * @returns The public URL of the uploaded file.
    */
-  async uploadFile(file: Express.Multer.File): Promise<string> {
+  async uploadProfile(
+    file: Express.Multer.File,
+    user_id: string,
+  ): Promise<string> {
     // Generate a unique file name to prevent collisions
     const fileExtension = file.originalname.split('.').pop();
-    const uniqueKey = `${uuid()}.${fileExtension}`;
+    const uniqueKey = `${user_id}.${fileExtension}`;
 
     const params: PutObjectCommandInput = {
       Bucket: this.bucketName,
@@ -48,7 +51,7 @@ export class S3Service {
     try {
       await this.s3Client.send(command);
       // Construct the public URL (S3 public access should be enabled for this to work)
-      return `https://${this.bucketName}.s3.${this.configService.get('AWS_REGION')}.amazonaws.com/${uniqueKey}`;
+      return `https://${this.bucketName}.s3.${this.configService.get('BUCKET_REGION')}.amazonaws.com/${uniqueKey}`;
     } catch (error) {
       console.error('S3 Upload Error:', error);
       throw new Error('Could not upload file to S3.');

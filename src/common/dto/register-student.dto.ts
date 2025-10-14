@@ -35,4 +35,8 @@ export class RegisterStudentDto {
   @IsString()
   @IsNotEmpty()
   password: string;
+
+  @IsString()
+  @IsOptional()
+  profileUrl: string;
 }

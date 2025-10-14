@@ -43,6 +43,9 @@ export class Teacher {
   @Column({ type: 'text' })
   phone: string;
 
+  @Column({ type: 'text', nullable: true })
+  profileUrl: string;
+
   @Column({ type: 'enum', enum: Roles, default: Roles.TEACHER })
   role: Roles;
 
