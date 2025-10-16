@@ -7,6 +7,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io'; // Corrected import for Socket
 import { Attendance } from 'src/endpoints/attendance/entities/attendance.entity';
+import { Student } from 'src/endpoints/users/students/entities/student.entity';
 
 @WebSocketGateway({ cors: '*' })
 export class RfidTapGateway {
@@ -28,5 +29,9 @@ export class RfidTapGateway {
 
   handleRfidTap(rfid_tag_uid: string) {
     this.server.emit('tapped', { data: rfid_tag_uid });
+  }
+
+  handleEmitStudentInfo(student: Student) {
+    this.server.emit('studentInfo', { data: student });
   }
 }

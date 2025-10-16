@@ -15,6 +15,7 @@ import { RfidTapGateway } from 'src/gateways/rfid-tap-.gateway';
 import { ClassService } from '../class/class.service';
 import { Schedule } from '../schedule/entities/schedule.entity';
 import { ParentsService } from '../users/parents/parents.service';
+import { timeToDisplay } from 'src/common/helpers/time.helpers';
 
 // 957ac17f-0860-49a3-a04e-c31a98ec929b - student
 
@@ -57,6 +58,7 @@ export class AttendanceService {
       throw new ForbiddenException('No Schedule within this time');
     }
     const status = this.getStatus(currentSchedule);
+
     console.log(status);
 
     const newAttendance = this.attendanceRepository.create({
@@ -67,16 +69,25 @@ export class AttendanceService {
 
     const savedAttendance = await this.attendanceRepository.save(newAttendance);
 
-    this.notificationsService.sendAttendanceNotification(
-      [
-        student.push_token && student.push_token,
-        parent.push_token && parent.push_token,
-      ],
-      {
-        body: `${currentSchedule.start_time} - ${currentSchedule.end_time}`,
-        title: `${currentSchedule.subject.name}`,
-      },
-    );
+    if (student.push_token) {
+      this.notificationsService.sendAttendanceNotification(
+        [student.push_token],
+        {
+          body: `${timeToDisplay(currentSchedule.start_time)} - ${timeToDisplay(currentSchedule.end_time)}`,
+          title: `${currentSchedule.subject.name}`,
+        },
+      );
+    }
+
+    if (parent && parent.push_token) {
+      this.notificationsService.sendAttendanceNotification(
+        [parent.push_token],
+        {
+          body: `${currentSchedule.start_time} - ${currentSchedule.end_time}`,
+          title: `${currentSchedule.subject.name}`,
+        },
+      );
+    }
 
     return savedAttendance;
   }
@@ -164,18 +175,24 @@ export class AttendanceService {
 
     const today = new Date().toISOString().split('T')[0];
     const start = new Date(`${today}T${currentSchedule.start_time}`);
-    const end = new Date(`${today}T${currentSchedule.end_time}`);
 
-    const diffMinutes = (now.getTime() - start.getTime()) / (1000 * 60) / 60;
+    const end = new Date(`${today}T${currentSchedule.end_time}`);
 
     let status = ATTENDANCE_STATUS.ABSENT;
 
-    console.log(start);
-    console.log(now);
-    console.log(now.getTime() - start.getTime());
-    console.log(diffMinutes);
-    console.log('NOW:', now.getTime());
-    console.log('START:', start.getTime());
+    // const isBetweenSchedHours = now.getHours()
+
+    const diffMinutes = now.getMinutes() - start.getMinutes();
+
+    if (now.getHours() - end.getHours() > 0) return ATTENDANCE_STATUS.ABSENT;
+
+    // console.log('Now:', now);
+    // console.log('now is greater than:', now.getTime() > start.getTime());
+    // console.log('now is less than:', now.getTime() < start.getTime());
+    // console.log(now.getTime() - start.getTime());
+    // console.log(diffMinutes);
+    // console.log('NOW:', now.getTime());
+    // console.log('START:', start.getTime());
 
     if (diffMinutes <= 0) {
       status = ATTENDANCE_STATUS.PRESENT; // early or exact

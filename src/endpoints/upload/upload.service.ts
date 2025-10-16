@@ -13,14 +13,14 @@ export class UploadService {
     private readonly parentService: ParentsService,
   ) {}
 
-  updateProfile(user: any, profileUrl: string) {
-    switch (user.role) {
-      case user.role === Roles.PARENT:
-        return this.parentService.updateParent(user.userId, { profileUrl });
-      case user.role === Roles.TEACHER:
-        return this.teacherService.updateTeacher(user.userId, { profileUrl });
-      case user.role === Roles.STUDENT:
-        return this.studentService.updateStudent(user.userId, { profileUrl });
+  updateProfile(role: Roles, userId: string, profileUrl: string) {
+    switch (role) {
+      case Roles.PARENT:
+        return this.parentService.updateParent(userId, { profileUrl });
+      case Roles.TEACHER:
+        return this.teacherService.updateTeacher(userId, { profileUrl });
+      case Roles.STUDENT:
+        return this.studentService.updateStudent(userId, { profileUrl });
     }
   }
 }

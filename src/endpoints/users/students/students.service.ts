@@ -78,7 +78,7 @@ export class StudentsService {
   async findByRfidUid(uid: string) {
     const student = await this.studentRepository.findOne({
       where: { rfid_tag_uid: uid },
-      relations: ['class', 'parent'],
+      relations: ['class', 'parent', 'class.class_teacher'],
     });
 
     if (!student) {
@@ -102,10 +102,12 @@ export class StudentsService {
   }
 
   async deleteStudent(id: string) {
+    console.log('ID!!!!:', id);
     const student = await this.studentRepository.findOne({ where: { id } });
     if (!student) {
       throw new BadRequestException('Student not found');
     }
+
     await this.studentRepository.remove(student);
   }
 

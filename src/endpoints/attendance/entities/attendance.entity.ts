@@ -26,7 +26,9 @@ export class Attendance {
   @CreateDateColumn()
   timestamp: Date;
 
-  @ManyToOne(() => Student, (student) => student.attendances)
+  @ManyToOne(() => Student, (student) => student.attendances, {
+    onDelete: 'CASCADE',
+  })
   student: Student;
 
   @ManyToOne(() => Class, (aclass) => aclass.attendance_records)

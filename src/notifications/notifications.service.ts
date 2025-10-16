@@ -15,6 +15,8 @@ export class NotificationsService {
     expoPushTokens: string[],
     data?: NotificationData,
   ) {
+    if (expoPushTokens.length < 1) return;
+
     if (!Expo.isExpoPushToken(expoPushTokens[0])) {
       console.error(
         `Push token ${expoPushTokens[0]} is not a valid Expo push token`,

@@ -11,6 +11,7 @@ import {
   UseGuards,
   Request,
   UnauthorizedException,
+  Body,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { use } from 'passport';
@@ -44,15 +45,13 @@ export class UploadController {
       }),
     )
     file: Express.Multer.File,
-    @Request() req,
+    @Body() body: { userId: string; role: Roles },
   ) {
-    const { user } = req;
+    console.log(body);
 
-    if (!user) throw new UnauthorizedException();
+    const fileUrl = await this.s3Service.uploadProfile(file, body.userId);
 
-    const fileUrl = await this.s3Service.uploadProfile(file, user.userId);
-
-    await this.uploadService.updateProfile(user, fileUrl);
+    await this.uploadService.updateProfile(body.role, body.userId, fileUrl);
 
     // Return the URL to your Expo app
     return {

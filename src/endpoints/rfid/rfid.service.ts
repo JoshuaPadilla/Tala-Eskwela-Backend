@@ -25,6 +25,10 @@ export class RfidService {
 
       this.rfidTapGateway.handleRfidTap(rfid_tag_uid);
     } else {
+      const student = await this.studentService.findByRfidUid(rfid_tag_uid);
+
+      this.rfidTapGateway.handleEmitStudentInfo(student);
+
       const newAttendance =
         await this.attendanceService.createAttendance(rfid_tag_uid);
 

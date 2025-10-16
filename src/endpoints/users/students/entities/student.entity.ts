@@ -61,13 +61,17 @@ export class Student {
 
   // Relations
 
-  @OneToMany(() => Attendance, (attendance) => attendance.student)
+  @OneToMany(() => Attendance, (attendance) => attendance.student, {
+    onDelete: 'CASCADE',
+  })
   attendances: Attendance[];
 
-  @ManyToOne(() => Class, (classes) => classes.students)
+  @ManyToOne(() => Class, (classes) => classes.students, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'class_id' }) // <-- Add this decorator
   class: Class;
 
-  @ManyToOne(() => Parent, (parent) => parent.students)
+  @ManyToOne(() => Parent, (parent) => parent.students, { onDelete: 'CASCADE' })
   parent: Parent;
 }
