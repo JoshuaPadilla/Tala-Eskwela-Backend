@@ -59,7 +59,6 @@ export class AttendanceService {
     }
     const status = this.getStatus(currentSchedule);
 
-    console.log(status);
 
     const newAttendance = this.attendanceRepository.create({
       class: classObj,

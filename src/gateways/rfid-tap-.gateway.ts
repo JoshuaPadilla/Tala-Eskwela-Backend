@@ -32,6 +32,7 @@ export class RfidTapGateway {
   }
 
   handleEmitStudentInfo(student: Student) {
+    console.log('Emitted');
     this.server.emit('studentInfo', { data: student });
   }
 }

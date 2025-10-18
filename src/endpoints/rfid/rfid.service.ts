@@ -20,11 +20,11 @@ export class RfidService {
     const value = await this.cache.get('rfid_mode');
 
     if (value === RFID_MODE.REGISTER) {
-      console.log('register');
       await this.studentService.registerStudentUuid(rfid_tag_uid);
 
       this.rfidTapGateway.handleRfidTap(rfid_tag_uid);
     } else {
+      
       const student = await this.studentService.findByRfidUid(rfid_tag_uid);
 
       this.rfidTapGateway.handleEmitStudentInfo(student);

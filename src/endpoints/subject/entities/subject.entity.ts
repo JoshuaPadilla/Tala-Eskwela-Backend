@@ -7,6 +7,9 @@ export class Subject {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'text', nullable: true })
+  coverPic: string;
+
   @Column({ type: 'text' })
   name: string;
 
