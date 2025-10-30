@@ -24,7 +24,6 @@ export class RfidService {
 
       this.rfidTapGateway.handleRfidTap(rfid_tag_uid);
     } else {
-      
       const student = await this.studentService.findByRfidUid(rfid_tag_uid);
 
       this.rfidTapGateway.handleEmitStudentInfo(student);
@@ -32,7 +31,7 @@ export class RfidService {
       const newAttendance =
         await this.attendanceService.createAttendance(rfid_tag_uid);
 
-      this.attendanceGateway.handleNewAttendance(newAttendance);
+      this.attendanceGateway.handleEmitNewAttendance(newAttendance);
     }
   }
 }

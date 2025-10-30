@@ -23,6 +23,15 @@ export class RfidTapGateway {
     console.log(`Client ${client.id} joined room ${body.class_id}`);
   }
 
+  @SubscribeMessage('join_subject')
+  handleJoinSubject(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() body: { subject_id: string },
+  ) {
+    client.join(body.subject_id);
+    console.log(`Client ${client.id} joined subject room ${body.subject_id}`);
+  }
+
   handleConnection(client: Socket) {
     console.log(`A new client connected: ${client.id}`);
   }
@@ -32,7 +41,6 @@ export class RfidTapGateway {
   }
 
   handleEmitStudentInfo(student: Student) {
-    console.log('Emitted');
     this.server.emit('studentInfo', { data: student });
   }
 }

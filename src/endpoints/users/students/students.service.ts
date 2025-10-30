@@ -62,7 +62,7 @@ export class StudentsService {
   async findById(id: string): Promise<Student> {
     const student = await this.studentRepository.findOne({
       where: { id },
-      relations: ['class', 'parent', 'parent.push_token'],
+      relations: ['class', 'parent'],
     });
     if (!student) {
       throw new NotFoundException('No Student found');

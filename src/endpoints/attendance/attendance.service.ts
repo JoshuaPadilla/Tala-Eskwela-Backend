@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Inject,
   Injectable,
@@ -16,6 +17,7 @@ import { ClassService } from '../class/class.service';
 import { Schedule } from '../schedule/entities/schedule.entity';
 import { ParentsService } from '../users/parents/parents.service';
 import { timeToDisplay } from 'src/common/helpers/time.helpers';
+import { arrayNotContains } from 'class-validator';
 
 // 957ac17f-0860-49a3-a04e-c31a98ec929b - student
 
@@ -57,8 +59,17 @@ export class AttendanceService {
     if (!currentSchedule) {
       throw new ForbiddenException('No Schedule within this time');
     }
-    const status = this.getStatus(currentSchedule);
 
+    if (
+      await this.isExistingAttendance(
+        student.id,
+        currentSchedule.id,
+        classObj.id,
+      )
+    ) {
+      throw new BadRequestException('Already in Attendance');
+    }
+    const status = this.getStatus(currentSchedule);
 
     const newAttendance = this.attendanceRepository.create({
       class: classObj,
@@ -125,8 +136,8 @@ export class AttendanceService {
     return currentClassAttendance;
   }
 
-  async getAttendanceByCurrentSched(class_id: string, schedule_id?: string) {
-    const classObj = await this.classService.findById(class_id);
+  async getAttendanceByCurrentSched(class_id: string, schedule_id: string) {
+    const classObj = await this.classService.findById(class_id, ['schedules']);
 
     if (!classObj) throw new NotFoundException('No class found');
 
@@ -140,7 +151,7 @@ export class AttendanceService {
       .getMany();
 
     const currentMonth = new Date().getMonth();
-    const currentDate = new Date().getDate() - 1;
+    const currentDate = new Date().getDate();
     const currentSchedAttendance = schedAllAttendance.filter((att) => {
       const attMonth = att.timestamp.getMonth();
       const attDate = att.timestamp.getDate();
@@ -148,10 +159,16 @@ export class AttendanceService {
       return attMonth === currentMonth && attDate === currentDate;
     });
 
-    return currentSchedAttendance;
+    return currentSchedAttendance.sort((a, b) => {
+      return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+    });
   }
 
-  private getCurrentSchedule(schedules: Schedule[]) {
+  async deleteAll() {
+    return this.attendanceRepository.clear();
+  }
+
+  getCurrentSchedule(schedules: Schedule[]) {
     const now = new Date();
 
     const currentDay = new Date()
@@ -204,5 +221,22 @@ export class AttendanceService {
     }
 
     return status;
+  }
+
+  async isExistingAttendance(
+    student_id: string,
+    sched_id: string,
+    class_id: string,
+  ) {
+    const currentSchedAttendance = await this.getAttendanceByCurrentSched(
+      class_id,
+      sched_id,
+    );
+
+    const existingAttendance = currentSchedAttendance.find((att) => {
+      return att.student.id === student_id;
+    });
+
+    return existingAttendance ? true : false;
   }
 }

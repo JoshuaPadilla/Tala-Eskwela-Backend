@@ -23,7 +23,10 @@ export class Attendance {
   status: ATTENDANCE_STATUS;
 
   //Relations
-  @CreateDateColumn()
+  @Column({
+    type: 'timestamptz',
+    default: () => "CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Manila'",
+  })
   timestamp: Date;
 
   @ManyToOne(() => Student, (student) => student.attendances, {

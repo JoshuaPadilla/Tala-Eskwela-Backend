@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Query } from '@nestjs/common';
 import { AttendanceService } from './attendance.service';
 
 @Controller('attendance')
@@ -19,5 +19,10 @@ export class AttendanceController {
       class_id,
       schedule_id,
     );
+  }
+
+  @Delete()
+  deleteAll() {
+    return this.attendanceService.deleteAll();
   }
 }
