@@ -68,9 +68,10 @@ export class Student {
 
   @ManyToOne(() => Class, (classes) => classes.students, {
     onDelete: 'CASCADE',
+    nullable: true,
   })
   @JoinColumn({ name: 'class_id' }) // <-- Add this decorator
-  class: Class;
+  class: Class | null;
 
   @ManyToOne(() => Parent, (parent) => parent.students, { onDelete: 'CASCADE' })
   parent: Parent;

@@ -61,7 +61,7 @@ export class ScheduleService {
   async findOne(sched_id: string) {
     return await this.scheduleRepository.findOne({
       where: { id: sched_id },
-      relations: ['class', 'subject', 'class.students'],
+      relations: ['class', 'subject', 'class.students', 'class.class_teacher'],
     });
   }
 

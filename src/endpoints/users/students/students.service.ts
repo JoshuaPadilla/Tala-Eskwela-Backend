@@ -168,6 +168,12 @@ export class StudentsService {
     return parentToReturn;
   }
 
+  async removeClass(student: Student) {
+    student.class = null;
+
+    await this.studentRepository.save(student);
+  }
+
   // getters and setters
   getStudentIdToRegister() {
     return this.studentIdToRegister;

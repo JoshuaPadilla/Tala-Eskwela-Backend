@@ -43,6 +43,10 @@ export class AttendanceService {
 
     const parent = student.parent;
 
+    if (!student.class) {
+      throw new NotFoundException('Student not yet enrolled');
+    }
+
     const classObj = await this.classService.findById(student.class?.id, [
       'schedules',
       'schedules.subject',

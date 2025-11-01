@@ -10,6 +10,7 @@ import { Teacher } from '../users/teachers/entities/teacher.entity';
 import { TeachersService } from '../users/teachers/teachers.service';
 import { ScheduleService } from '../schedule/schedule.service';
 import { StudentsService } from '../users/students/students.service';
+import { skip } from 'node:test';
 
 @Injectable()
 export class ClassService {
@@ -186,5 +187,35 @@ export class ClassService {
       where: { id: class_id },
       relations: relations,
     });
+  }
+
+  async removeStudent(class_id: string, student_id: string) {
+    const student = await this.studentRepository.findOne({
+      where: { id: student_id },
+    });
+
+    if (!student) {
+      throw new NotFoundException('Cannot find class');
+    }
+
+    const classObj = await this.classRepository.findOne({
+      where: { id: class_id },
+      relations: ['students'],
+    });
+
+    if (!classObj) {
+      throw new NotFoundException('Cannot find class');
+    }
+
+    const updatedStudents = classObj.students.filter(
+      (student) => student.id !== student_id,
+    );
+
+    classObj.students = updatedStudents;
+
+    // clear class reference on the removed students (if any) and persist
+
+    await this.studentService.removeClass(student);
+    await this.classRepository.save(classObj);
   }
 }

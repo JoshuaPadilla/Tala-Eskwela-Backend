@@ -50,4 +50,13 @@ export class ClassController {
   ) {
     return this.classService.addStudents(class_id, body.student_ids);
   }
+
+  @Post('remove/:id')
+  removeStudent(
+    @Param('id') class_id: string,
+    @Body() body: { student_id: string },
+  ) {
+    console.log(class_id, body.student_id);
+    return this.classService.removeStudent(class_id, body.student_id);
+  }
 }
