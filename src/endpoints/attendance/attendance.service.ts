@@ -18,6 +18,7 @@ import { Schedule } from '../schedule/entities/schedule.entity';
 import { ParentsService } from '../users/parents/parents.service';
 import { timeToDisplay } from 'src/common/helpers/time.helpers';
 import { arrayNotContains } from 'class-validator';
+import e from 'express';
 
 // 957ac17f-0860-49a3-a04e-c31a98ec929b - student
 
@@ -60,6 +61,8 @@ export class AttendanceService {
 
     const currentSchedule = this.getCurrentSchedule(classObj.schedules);
 
+    console.log('current sched:', currentSchedule);
+
     if (!currentSchedule) {
       throw new ForbiddenException('No Schedule within this time');
     }
@@ -84,28 +87,38 @@ export class AttendanceService {
     const savedAttendance = await this.attendanceRepository.save(newAttendance);
 
     if (student.push_token) {
-      this.notificationsService.sendAttendanceNotification(
-        [student.push_token],
-        {
-          body: `${timeToDisplay(currentSchedule.start_time)} - ${timeToDisplay(currentSchedule.end_time)}`,
-          title: `${currentSchedule.subject.name}`,
-        },
-      );
+      console.log('student push token:', student.push_token);
+      console.log('Sending notif to student...');
+
+      this.notificationsService.sendStudentNotif(student.push_token, {
+        body: `student ${timeToDisplay(currentSchedule.start_time)} - ${timeToDisplay(currentSchedule.end_time)}`,
+        title: `Attendance for ${currentSchedule.subject.name}`,
+        classId: classObj.id,
+        user: 'student',
+        attendanceId: savedAttendance.id,
+      });
     }
 
     if (parent && parent.push_token) {
-      this.notificationsService.sendAttendanceNotification(
-        [parent.push_token],
-        {
-          body: `${currentSchedule.start_time} - ${currentSchedule.end_time}`,
-          title: `${currentSchedule.subject.name}`,
-        },
-      );
+      this.notificationsService.sendParentNotif(parent.push_token, {
+        body: `${currentSchedule.start_time} - ${currentSchedule.end_time}`,
+        title: `${currentSchedule.subject.name}`,
+        user: 'parent',
+        classId: classObj.id,
+        studentId: student.id,
+        attendanceId: savedAttendance.id,
+      });
     }
 
     return savedAttendance;
   }
 
+  async findOne(attendanceId: string) {
+    return this.attendanceRepository.findOne({
+      where: { id: attendanceId },
+      relations: ['student', 'class', 'class.class_teacher'],
+    });
+  }
   async findAll(query: Partial<Attendance>) {
     const qb = this.attendanceRepository
       .createQueryBuilder('attendance')
@@ -175,17 +188,25 @@ export class AttendanceService {
   getCurrentSchedule(schedules: Schedule[]) {
     const now = new Date();
 
+    // Your day check logic is fine
     const currentDay = new Date()
       .toLocaleString('en-US', { weekday: 'long' })
       .toLowerCase();
 
     return schedules.find((schedule) => {
-      if (schedule.day_of_week.toLowerCase() !== currentDay) return undefined;
+      if (schedule.day_of_week.toLowerCase() !== currentDay) return false; // return false, not undefined
 
+      // 1. Get the current date string (e.g., "2025-12-03")
       const today = new Date().toISOString().split('T')[0];
-      const start = new Date(`${today}T${schedule.start_time}`);
-      const end = new Date(`${today}T${schedule.end_time}`);
 
+      // 2. 🔑 CRITICAL FIX: Append 'Z' to the time string.
+      // This tells JavaScript to interpret the time as UTC,
+      // which effectively negates the unwanted time zone conversion
+      // and keeps the time on the correct day for comparison.
+      const start = new Date(`${today}T${schedule.start_time}Z`);
+      const end = new Date(`${today}T${schedule.end_time}Z`);
+
+      // Check if current time is within the schedule window
       return start <= now && end >= now;
     });
   }

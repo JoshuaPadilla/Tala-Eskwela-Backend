@@ -5,6 +5,16 @@ import { AttendanceService } from './attendance.service';
 export class AttendanceController {
   constructor(private readonly attendanceService: AttendanceService) {}
 
+  @Get()
+  findAll() {
+    return this.attendanceService.findAll({});
+  }
+
+  @Get('one/:id')
+  findOne(@Param('id') id: string) {
+    return this.attendanceService.findOne(id);
+  }
+
   @Get(':id')
   getCurrentSchedAttendance(@Param('id') class_id: string) {
     return this.attendanceService.getCurrentSchedAttendance(class_id);
