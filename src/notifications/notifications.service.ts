@@ -29,7 +29,7 @@ export class NotificationsService {
       body,
       to: expoPushToken,
       sound: 'default',
-      ...rest,
+      data: { ...rest },
     };
 
     // The Expo push notification service will handle the rest.
@@ -76,6 +76,8 @@ export class NotificationsService {
       );
       return;
     }
+
+    console.log('Student:', data);
 
     const { title, body, ...rest } = data;
 

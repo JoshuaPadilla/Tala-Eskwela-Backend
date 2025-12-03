@@ -1,6 +1,7 @@
 import { Class } from 'src/endpoints/class/entities/class.entity';
 import { Student } from 'src/endpoints/users/students/entities/student.entity';
 import { ATTENDANCE_STATUS } from 'src/enums/attendance-status.enum';
+import { text } from 'stream/consumers';
 import {
   Column,
   CreateDateColumn,
@@ -21,6 +22,9 @@ export class Attendance {
     default: ATTENDANCE_STATUS.ABSENT,
   })
   status: ATTENDANCE_STATUS;
+
+  @Column({ type: 'text', nullable: true })
+  scheduleId: string;
 
   //Relations
   @Column({

@@ -61,8 +61,6 @@ export class AttendanceService {
 
     const currentSchedule = this.getCurrentSchedule(classObj.schedules);
 
-    console.log('current sched:', currentSchedule);
-
     if (!currentSchedule) {
       throw new ForbiddenException('No Schedule within this time');
     }
@@ -82,6 +80,7 @@ export class AttendanceService {
       class: classObj,
       student: student,
       status: status,
+      scheduleId: currentSchedule.id || '',
     });
 
     const savedAttendance = await this.attendanceRepository.save(newAttendance);

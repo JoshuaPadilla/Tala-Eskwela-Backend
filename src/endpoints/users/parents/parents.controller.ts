@@ -19,8 +19,8 @@ import { Roles } from 'src/enums/role.enum';
 import { RolesGuard } from 'src/guards/role.guard';
 import { Request } from 'express';
 
-@User_Roles(Roles.TEACHER)
-@UseGuards(JwtAuthGuard, RolesGuard)
+// @User_Roles(Roles.TEACHER)
+// @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('parents')
 export class ParentsController {
   constructor(private readonly parentsService: ParentsService) {}
