@@ -1,5 +1,14 @@
-import { Controller, Delete, Get, Param, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Query,
+} from '@nestjs/common';
 import { AttendanceService } from './attendance.service';
+import { Attendance } from './entities/attendance.entity';
 
 @Controller('attendance')
 export class AttendanceController {
@@ -29,6 +38,15 @@ export class AttendanceController {
       class_id,
       schedule_id,
     );
+  }
+
+  @Patch(':id')
+  updateAttendance(
+    @Param('id') id: string,
+    @Body() payload: Partial<Attendance>,
+  ) {
+    console.log('Updating...');
+    return this.attendanceService.update(id, payload);
   }
 
   @Delete()

@@ -77,8 +77,6 @@ export class NotificationsService {
       return;
     }
 
-    console.log('Student:', data);
-
     const { title, body, ...rest } = data;
 
     const messages = [
@@ -92,8 +90,6 @@ export class NotificationsService {
         },
       },
     ];
-
-    console.log(messages[0]);
 
     // The Expo push notification service will handle the rest.
     const chunks = this.expo.chunkPushNotifications(messages);

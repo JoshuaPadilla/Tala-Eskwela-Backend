@@ -86,9 +86,6 @@ export class AttendanceService {
     const savedAttendance = await this.attendanceRepository.save(newAttendance);
 
     if (student.push_token) {
-      console.log('student push token:', student.push_token);
-      console.log('Sending notif to student...');
-
       this.notificationsService.sendStudentNotif(student.push_token, {
         body: `student ${timeToDisplay(currentSchedule.start_time)} - ${timeToDisplay(currentSchedule.end_time)}`,
         title: `Attendance for ${currentSchedule.subject.name}`,
@@ -135,6 +132,10 @@ export class AttendanceService {
     });
 
     return qb.getMany();
+  }
+
+  async update(attendanceId: string, payload: Partial<Attendance>) {
+    return await this.attendanceRepository.update(attendanceId, payload);
   }
 
   async getCurrentSchedAttendance(class_id: string) {
@@ -226,6 +227,10 @@ export class AttendanceService {
 
     if (now.getHours() - end.getHours() > 0) return ATTENDANCE_STATUS.ABSENT;
 
+    console.log('Now:', now);
+    console.log('Diff:', diffMinutes);
+    console.log('start:', start);
+    console.log('end:', end);
     // console.log('Now:', now);
     // console.log('now is greater than:', now.getTime() > start.getTime());
     // console.log('now is less than:', now.getTime() < start.getTime());
