@@ -19,6 +19,7 @@ import { ParentsService } from '../users/parents/parents.service';
 import { timeToDisplay } from 'src/common/helpers/time.helpers';
 import { arrayNotContains } from 'class-validator';
 import e from 'express';
+import { time } from 'console';
 
 // 957ac17f-0860-49a3-a04e-c31a98ec929b - student
 
@@ -37,6 +38,7 @@ export class AttendanceService {
 
   async createAttendance(uuid: string) {
     const student = await this.studentService.findByRfidUid(uuid);
+    const now = new Date();
 
     if (!student) {
       throw new NotFoundException('Student not found');
@@ -87,7 +89,7 @@ export class AttendanceService {
 
     if (student.push_token) {
       this.notificationsService.sendStudentNotif(student.push_token, {
-        body: `student ${timeToDisplay(currentSchedule.start_time)} - ${timeToDisplay(currentSchedule.end_time)}`,
+        body: `Attendance successfully recorded for ${currentSchedule.subject.name}`,
         title: `Attendance for ${currentSchedule.subject.name}`,
         classId: classObj.id,
         user: 'student',
@@ -97,8 +99,8 @@ export class AttendanceService {
 
     if (parent && parent.push_token) {
       this.notificationsService.sendParentNotif(parent.push_token, {
-        body: `${currentSchedule.start_time} - ${currentSchedule.end_time}`,
-        title: `${currentSchedule.subject.name}`,
+        body: `${student.first_name} attended today at ${timeToDisplay(`${now.getHours()}:${now.getMinutes()}`)} today for class ${currentSchedule.subject.name}`,
+        title: `${student.first_name} attendance`,
         user: 'parent',
         classId: classObj.id,
         studentId: student.id,
@@ -135,7 +137,44 @@ export class AttendanceService {
   }
 
   async update(attendanceId: string, payload: Partial<Attendance>) {
-    return await this.attendanceRepository.update(attendanceId, payload);
+    const { status } = payload;
+    const existingAttendance = await this.attendanceRepository.findOne({
+      where: { id: attendanceId },
+      relations: ['student', 'class', 'class.schedules', 'student.parent'], // Specify the relations here
+    });
+
+    const parent = existingAttendance?.student.parent;
+    const student = existingAttendance?.student;
+    if (!existingAttendance) {
+      // Handle the case where the attendance record doesn't exist
+      throw new NotFoundException(
+        `Attendance with ID ${attendanceId} not found`,
+      );
+    }
+
+    await this.attendanceRepository.update(
+      attendanceId, // Include the existing entity with relations
+      payload, // Apply the updates from the payload
+    );
+
+    const currentSchedule = this.getCurrentSchedule(
+      existingAttendance.class.schedules,
+    );
+
+    if (!currentSchedule) {
+      throw new ForbiddenException('No Schedule within this time');
+    }
+
+    if (parent && parent.push_token) {
+      this.notificationsService.sendParentNotif(parent.push_token, {
+        body: `${student?.first_name} attendance updated to ${status}`,
+        title: `${student?.first_name} attendance`,
+        user: 'parent',
+        classId: existingAttendance.class.id,
+        studentId: student?.id || '',
+        attendanceId: attendanceId,
+      });
+    }
   }
 
   async getCurrentSchedAttendance(class_id: string) {
