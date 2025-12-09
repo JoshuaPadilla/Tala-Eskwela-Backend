@@ -225,27 +225,27 @@ export class AttendanceService {
   }
 
   getCurrentSchedule(schedules: Schedule[]) {
-    const now = new Date();
+    const now = this.toPH(new Date()); // convert current time to PH
+
+    const today = now.toISOString().split('T')[0];
     const currentDay = now
       .toLocaleString('en-US', { weekday: 'long' })
       .toLowerCase();
 
-    const today = now.toISOString().split('T')[0];
-
-    console.log(now);
-    console.log(today);
-
     return schedules.find((schedule) => {
       if (schedule.day_of_week.toLowerCase() !== currentDay) return false;
 
-      const start = new Date(`${today}T${schedule.start_time}`);
-      const end = new Date(`${today}T${schedule.end_time}`);
-
-      console.log(start);
-      console.log(end);
+      const start = this.toPH(new Date(`${today}T${schedule.start_time}`));
+      const end = this.toPH(new Date(`${today}T${schedule.end_time}`));
 
       return now >= start && now <= end;
     });
+  }
+
+  private toPH(date: Date) {
+    const utc = date.getTime();
+    const offset = 8 * 60 * 60 * 1000;
+    return new Date(utc + offset);
   }
 
   private getStatus(currentSchedule: Schedule) {
