@@ -232,11 +232,17 @@ export class AttendanceService {
 
     const today = now.toISOString().split('T')[0];
 
+    console.log(now);
+    console.log(today);
+
     return schedules.find((schedule) => {
       if (schedule.day_of_week.toLowerCase() !== currentDay) return false;
 
       const start = new Date(`${today}T${schedule.start_time}`);
       const end = new Date(`${today}T${schedule.end_time}`);
+
+      console.log(start);
+      console.log(end);
 
       return now >= start && now <= end;
     });
