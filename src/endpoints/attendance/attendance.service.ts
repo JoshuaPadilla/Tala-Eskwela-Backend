@@ -225,27 +225,31 @@ export class AttendanceService {
   }
 
   getCurrentSchedule(schedules: Schedule[]) {
-    const now = this.toPH(new Date()); // convert current time to PH
+    const now = new Date();
 
-    const today = now.toISOString().split('T')[0];
-    const currentDay = now
+    // Your day check logic is fine
+    const currentDay = new Date()
       .toLocaleString('en-US', { weekday: 'long' })
       .toLowerCase();
 
+    const today = now.toISOString().split('T')[0];
+
     return schedules.find((schedule) => {
-      if (schedule.day_of_week.toLowerCase() !== currentDay) return false;
+      if (schedule.day_of_week.toLowerCase() !== currentDay) return false; // return false, not undefined
 
-      const start = this.toPH(new Date(`${today}T${schedule.start_time}`));
-      const end = this.toPH(new Date(`${today}T${schedule.end_time}`));
+      // 1. Get the current date string (e.g., "2025-12-03")
+      const today = new Date().toISOString().split('T')[0];
 
-      return now >= start && now <= end;
+      // 2. 🔑 CRITICAL FIX: Append 'Z' to the time string.
+      // This tells JavaScript to interpret the time as UTC,
+      // which effectively negates the unwanted time zone conversion
+      // and keeps the time on the correct day for comparison.
+      const start = new Date(`${today}T${schedule.start_time}Z`);
+      const end = new Date(`${today}T${schedule.end_time}Z`);
+
+      // Check if current time is within the schedule window
+      return start <= now && end >= now;
     });
-  }
-
-  private toPH(date: Date) {
-    const utc = date.getTime();
-    const offset = 8 * 60 * 60 * 1000;
-    return new Date(utc + offset);
   }
 
   private getStatus(currentSchedule: Schedule) {
