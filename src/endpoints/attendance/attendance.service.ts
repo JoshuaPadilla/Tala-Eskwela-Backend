@@ -226,27 +226,19 @@ export class AttendanceService {
 
   getCurrentSchedule(schedules: Schedule[]) {
     const now = new Date();
-
-    // Your day check logic is fine
-    const currentDay = new Date()
+    const currentDay = now
       .toLocaleString('en-US', { weekday: 'long' })
       .toLowerCase();
 
+    const today = now.toISOString().split('T')[0];
+
     return schedules.find((schedule) => {
-      if (schedule.day_of_week.toLowerCase() !== currentDay) return false; // return false, not undefined
+      if (schedule.day_of_week.toLowerCase() !== currentDay) return false;
 
-      // 1. Get the current date string (e.g., "2025-12-03")
-      const today = new Date().toISOString().split('T')[0];
+      const start = new Date(`${today}T${schedule.start_time}`);
+      const end = new Date(`${today}T${schedule.end_time}`);
 
-      // 2. 🔑 CRITICAL FIX: Append 'Z' to the time string.
-      // This tells JavaScript to interpret the time as UTC,
-      // which effectively negates the unwanted time zone conversion
-      // and keeps the time on the correct day for comparison.
-      const start = new Date(`${today}T${schedule.start_time}Z`);
-      const end = new Date(`${today}T${schedule.end_time}Z`);
-
-      // Check if current time is within the schedule window
-      return start <= now && end >= now;
+      return now >= start && now <= end;
     });
   }
 
